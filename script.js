@@ -133,6 +133,9 @@ function isStfMatch(rawInput, expectedStf){
   const expectedTokens = stfTokens(expectedStf);
   if(!inputTokens.length || !expectedTokens.length) return false;
 
+  // Für Stammformen gilt: Nur vollständige Angaben zählen als richtig.
+  if(inputTokens.length !== expectedTokens.length) return false;
+
   const remaining = [...expectedTokens];
   for(const tok of inputTokens){
     const idx = remaining.indexOf(tok);
