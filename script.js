@@ -98,13 +98,23 @@ function normStf(s){
     // Punkte/Kommas/ähnliche Trenner angleichen, damit z.B. "m." und "m" gleich behandelt werden.
     .replace(/[.,;:/()\[\]{}]/g, ' ')
     .replace(/[^a-z0-9\s-]/g, ' ')
-    .replace(/\s+/g,' ');
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function normalizeStfToken(tok){
+  const t = (tok || '').trim();
+  if(!t) return '';
+  if(/^(m|masc|maskulin|masculinum)$/.test(t)) return 'm';
+  if(/^(f|fem|feminin|femininum)$/.test(t)) return 'f';
+  if(/^(n|neut|neutrum)$/.test(t)) return 'n';
+  return t;
 }
 
 function stfTokens(s){
   return normStf(s)
     .split(' ')
-    .map(t => t.trim())
+    .map(t => normalizeStfToken(t))
     .filter(Boolean);
 }
 
@@ -113,6 +123,9 @@ function isStfMatch(rawInput, expectedStf){
   const expectedNorm = normStf(expectedStf);
   if(!inputNorm || !expectedNorm) return false;
   if(inputNorm === expectedNorm) return true;
+
+  // Akzeptiert auch Varianten ohne sichtbare Trenner wie "exercitusm".
+  if(inputNorm.replace(/\s+/g,'') === expectedNorm.replace(/\s+/g,'')) return true;
 
   const inputTokens = stfTokens(rawInput);
   const expectedTokens = stfTokens(expectedStf);
