@@ -130,8 +130,7 @@
             <div id="q-review-empty" class="done-review-empty">Noch keine Ergebnisse vorhanden.</div>
           </div>
           <div class="btn-row done-actions">
-            <button class="btn btn-ghost" onclick="qDownloadAllReviewPdf()">Alle als PDF</button>
-            <button class="btn btn-ghost" onclick="qDownloadReviewPdf()">Gewusste als PDF</button>
+            <button class="btn btn-ghost" onclick="qDownloadAllReviewPdf()">Übersicht als PDF runterladen</button>
             <button class="btn btn-red" onclick="qRestart()">Nochmal üben</button>
           </div>
         </div>
@@ -217,7 +216,27 @@
               <div class="stat-lbl">Übersprungen</div>
             </div>
           </div>
-          <button class="btn btn-red" onclick="qRestartStf()">Nochmal üben</button>
+          <div class="done-review">
+            <div class="done-review-title">Dein Durchlauf</div>
+            <div class="done-review-table-wrap">
+              <table class="done-review-table">
+                <thead>
+                  <tr>
+                    <th>Vokabel</th>
+                    <th>Stammformen</th>
+                    <th>Bedeutung</th>
+                    <th>Gewusst?</th>
+                  </tr>
+                </thead>
+                <tbody id="q-review-body-stf"></tbody>
+              </table>
+            </div>
+            <div id="q-review-empty-stf" class="done-review-empty">Noch keine Ergebnisse vorhanden.</div>
+          </div>
+          <div class="btn-row done-actions">
+            <button class="btn btn-ghost" onclick="qDownloadAllReviewPdfStf()">Übersicht als PDF runterladen</button>
+            <button class="btn btn-red" onclick="qRestartStf()">Nochmal üben</button>
+          </div>
         </div>
       </div>
       </div>

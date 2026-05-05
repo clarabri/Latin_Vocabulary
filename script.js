@@ -85,15 +85,62 @@ function buildMeaningLookup(meanings){
   return exact;
 }
 
+function levenshtein(a, b){
+  const s = a || '';
+  const t = b || '';
+  const n = s.length;
+  const m = t.length;
+  if(n === 0) return m;
+  if(m === 0) return n;
+
+  const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  for(let i = 0; i <= n; i++) dp[i][0] = i;
+  for(let j = 0; j <= m; j++) dp[0][j] = j;
+
+  for(let i = 1; i <= n; i++){
+    for(let j = 1; j <= m; j++){
+      const cost = s[i - 1] === t[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + cost
+      );
+    }
+  }
+  return dp[n][m];
+}
+
+function fuzzyTokenInLookup(token, lookup){
+  if(!token) return false;
+  if(lookup.has(token)) return true;
+
+  const candidates = new Set();
+  lookup.forEach(entry => {
+    if(!entry) return;
+    candidates.add(entry);
+    entry.split(' ').forEach(w => { if(w) candidates.add(w); });
+  });
+
+  for(const cand of candidates){
+    if(cand === token) return true;
+    const maxDist = Math.max(token.length, cand.length) >= 8 ? 2 : 1;
+    if(Math.min(token.length, cand.length) >= 4 && levenshtein(token, cand) <= maxDist) return true;
+  }
+  return false;
+}
+
 function isMeaningMatch(part, lookup){
   if(!part) return false;
   if(lookup.has(part)) return true;
 
-  // Akzeptiert mehrere Bedeutungen auch ohne Satzzeichen, z.B. "eid schwur".
+  // Akzeptiert mehrere Bedeutungen auch ohne Satzzeichen und in anderer Reihenfolge.
   if(part.includes(' ')){
     const tokens = part.split(' ').filter(Boolean);
-    if(tokens.length > 1 && tokens.every(tok => lookup.has(tok))) return true;
+    if(tokens.length > 1 && tokens.every(tok => fuzzyTokenInLookup(tok, lookup))) return true;
   }
+
+  // Akzeptiert kleine Tippfehler wie "erluben" statt "erlauben".
+  if(fuzzyTokenInLookup(part, lookup)) return true;
 
   return Array.from(lookup).some(v => v.split(' ').includes(part) && part.length>3);
 }
@@ -661,10 +708,12 @@ function trReset(){
 // STAMMFORMEN QUIZ
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 let qWordsStf=[], qIdxStf=0, qRightStf=0, qWrongStf=0, qSkippedStf=0, qAnsweredStf=false;
+let qReviewRowsStf=[];
 
 function qStartStf(){
   qWordsStf = shuffle2(vocabData.filter(v => v.stf && v.stf !== '—'));
   qIdxStf=0; qRightStf=0; qWrongStf=0; qSkippedStf=0; qAnsweredStf=false;
+  qReviewRowsStf=[];
   const done = document.getElementById('q-done-stf'); if(done) done.classList.remove('show');
   const qm = document.getElementById('quiz-main-stf'); if(qm) qm.style.display='';
   qLoadStf();
@@ -700,6 +749,12 @@ function qCheckStf(){
   qAnsweredStf=true;
   document.getElementById('q-input-stf').disabled=true;
   if(isOk){ qRightStf++; } else { qWrongStf++; }
+  qReviewRowsStf.push({
+    la: w.la,
+    stf: w.stf,
+    de: (w.de || []).join(', '),
+    knew: isOk
+  });
   qUpdatePillsStf();
   const fb=document.getElementById('q-feedback-stf');
   if(fb) fb.className='feedback '+(isOk?'ok':'err')+' show';
@@ -722,6 +777,12 @@ function qSkipStf(){
   const w=qWordsStf[qIdxStf];
   qAnsweredStf=true;
   document.getElementById('q-input-stf').disabled=true;
+  qReviewRowsStf.push({
+    la: w.la,
+    stf: w.stf,
+    de: (w.de || []).join(', '),
+    knew: false
+  });
   qUpdatePillsStf();
   const fb=document.getElementById('q-feedback-stf'); if(fb) fb.className='feedback err show';
   document.getElementById('q-fb-title-stf').textContent='Übersprungen – Antwort:';
@@ -783,6 +844,190 @@ function hideQContextStf(){
   setTimeout(()=>{ if(box) box.style.display='none'; }, 240);
 }
 
+function ensureQReviewUIStf(){
+  const done = document.getElementById('q-done-stf');
+  if(!done) return null;
+
+  let body = document.getElementById('q-review-body-stf');
+  if(body) return body;
+
+  const review = document.createElement('div');
+  review.className = 'done-review';
+  review.innerHTML = `
+    <div class="done-review-title">Dein Durchlauf</div>
+    <div class="done-review-table-wrap">
+      <table class="done-review-table">
+        <thead>
+          <tr>
+            <th>Vokabel</th>
+            <th>Stammformen</th>
+            <th>Bedeutung</th>
+            <th>Gewusst?</th>
+          </tr>
+        </thead>
+        <tbody id="q-review-body-stf"></tbody>
+      </table>
+    </div>
+    <div id="q-review-empty-stf" class="done-review-empty">Noch keine Ergebnisse vorhanden.</div>
+  `;
+
+  const actions = done.querySelector('.done-actions');
+  if(actions) done.insertBefore(review, actions);
+  else done.appendChild(review);
+
+  body = document.getElementById('q-review-body-stf');
+  return body;
+}
+
+function renderQReviewTableStf(){
+  const body = ensureQReviewUIStf();
+  if(!body) return;
+
+  body.innerHTML = '';
+  const sortedRows = [...qReviewRowsStf].sort((a, b) => Number(a.knew) - Number(b.knew));
+
+  sortedRows.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.className = row.knew ? 'q-review-row-yes' : 'q-review-row-no';
+
+    const tdLa = document.createElement('td');
+    tdLa.textContent = row.la || '—';
+
+    const tdStf = document.createElement('td');
+    tdStf.textContent = row.stf || '—';
+
+    const tdDe = document.createElement('td');
+    tdDe.textContent = row.de || '—';
+
+    const tdKnew = document.createElement('td');
+    tdKnew.textContent = row.knew ? 'Ja' : 'Nein';
+    tdKnew.className = row.knew ? 'q-review-yes' : 'q-review-no';
+
+    tr.appendChild(tdLa);
+    tr.appendChild(tdStf);
+    tr.appendChild(tdDe);
+    tr.appendChild(tdKnew);
+    body.appendChild(tr);
+  });
+
+  const empty = document.getElementById('q-review-empty-stf');
+  if(empty) empty.style.display = qReviewRowsStf.length ? 'none' : 'block';
+}
+
+function qBuildReviewPdfStf(rows, options){
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    alert('PDF-Bibliothek konnte nicht geladen werden. Bitte Seite neu laden und erneut versuchen.');
+    return;
+  }
+
+  const opts = options || {};
+  const title = opts.title || 'Stammformen-Abfrage - Gesamter Durchlauf';
+  const filenamePrefix = opts.filenamePrefix || 'stammformen-ergebnisse';
+
+  const doc = new window.jspdf.jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+  const margin = 14;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const tableWidth = pageWidth - margin * 2;
+  const colWidths = [33, 53, 72, 24];
+  const lineHeight = 5;
+  const topY = 16;
+
+  const today = new Date();
+  const dateLabel = today.toLocaleDateString('de-DE');
+  const total = qRightStf + qWrongStf + qSkippedStf;
+  const scoreText = `${qRightStf} / ${total}`;
+
+  let y = topY;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text(title, margin, y);
+
+  y += 7;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.text(`Datum: ${dateLabel}`, margin, y);
+  y += 6;
+  doc.text(`Ergebnis: ${scoreText}`, margin, y);
+  y += 8;
+
+  function drawHeader(){
+    doc.setFillColor(240, 236, 227);
+    doc.rect(margin, y, tableWidth, 8, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('Vokabel', margin + 2, y + 5.5);
+    doc.text('Stammformen', margin + colWidths[0] + 2, y + 5.5);
+    doc.text('Bedeutung', margin + colWidths[0] + colWidths[1] + 2, y + 5.5);
+    doc.text('Gewusst', margin + colWidths[0] + colWidths[1] + colWidths[2] + 2, y + 5.5);
+    doc.setDrawColor(205, 195, 180);
+    doc.rect(margin, y, tableWidth, 8);
+    doc.line(margin + colWidths[0], y, margin + colWidths[0], y + 8);
+    doc.line(margin + colWidths[0] + colWidths[1], y, margin + colWidths[0] + colWidths[1], y + 8);
+    doc.line(margin + colWidths[0] + colWidths[1] + colWidths[2], y, margin + colWidths[0] + colWidths[1] + colWidths[2], y + 8);
+    y += 8;
+  }
+
+  drawHeader();
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+
+  rows
+    .slice()
+    .sort((a, b) => (a.la || '').localeCompare(b.la || '', 'de'))
+    .forEach(row => {
+      const laText = row.la || '—';
+      const stfText = row.stf || '—';
+      const deText = row.de || '—';
+      const statusText = row.knew ? 'Ja' : 'Nein';
+
+      const laLines = doc.splitTextToSize(laText, colWidths[0] - 4);
+      const stfLines = doc.splitTextToSize(stfText, colWidths[1] - 4);
+      const deLines = doc.splitTextToSize(deText, colWidths[2] - 4);
+      const statusLines = doc.splitTextToSize(statusText, colWidths[3] - 4);
+
+      const maxLines = Math.max(laLines.length, stfLines.length, deLines.length, statusLines.length, 1);
+      const rowHeight = Math.max(8, maxLines * lineHeight + 2);
+
+      if(y + rowHeight > pageHeight - margin){
+        doc.addPage();
+        y = topY;
+        drawHeader();
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+      }
+
+      doc.setDrawColor(222, 214, 201);
+      doc.rect(margin, y, tableWidth, rowHeight);
+      doc.line(margin + colWidths[0], y, margin + colWidths[0], y + rowHeight);
+      doc.line(margin + colWidths[0] + colWidths[1], y, margin + colWidths[0] + colWidths[1], y + rowHeight);
+      doc.line(margin + colWidths[0] + colWidths[1] + colWidths[2], y, margin + colWidths[0] + colWidths[1] + colWidths[2], y + rowHeight);
+
+      doc.text(laLines, margin + 2, y + 5);
+      doc.text(stfLines, margin + colWidths[0] + 2, y + 5);
+      doc.text(deLines, margin + colWidths[0] + colWidths[1] + 2, y + 5);
+      doc.text(statusLines, margin + colWidths[0] + colWidths[1] + colWidths[2] + 2, y + 5);
+
+      y += rowHeight;
+    });
+
+  const fileDate = today.toISOString().slice(0, 10);
+  doc.save(`${filenamePrefix}-${fileDate}.pdf`);
+}
+
+function qDownloadAllReviewPdfStf(){
+  if(!qReviewRowsStf.length){
+    alert('Noch keine Ergebnisse vorhanden.');
+    return;
+  }
+
+  qBuildReviewPdfStf(qReviewRowsStf, {
+    title: 'Stammformen-Abfrage - Gesamter Durchlauf',
+    filenamePrefix: 'alle-stammformen-ergebnisse'
+  });
+}
+
 function qDoneStf(){
   const qm = document.getElementById('quiz-main-stf'); if(qm) qm.style.display='none';
   const done = document.getElementById('q-done-stf'); if(done) done.classList.add('show');
@@ -793,6 +1038,8 @@ function qDoneStf(){
   const dsRight = document.getElementById('ds-right-stf'); if(dsRight) dsRight.textContent=qRightStf;
   const dsWrong = document.getElementById('ds-wrong-stf'); if(dsWrong) dsWrong.textContent=qWrongStf;
   const dsSkip = document.getElementById('ds-skip-stf'); if(dsSkip) dsSkip.textContent=qSkippedStf;
+  ensureQReviewUIStf();
+  renderQReviewTableStf();
 }
 
 // initialize from lessonData (loads vocab, quiz and translation)
