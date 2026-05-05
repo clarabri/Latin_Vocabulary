@@ -59,6 +59,32 @@ function qUpdatePills(){ const a=document.getElementById('qsp-right'); if(a) a.t
 
 function norm(s){ return s.trim().toLowerCase().replace(/[äöü]/g,c=>({ä:'ae',ö:'oe',ü:'ue'}[c]||c)).replace(/ß/g,'ss').replace(/[^a-z\s]/g,'').replace(/\s+/g,' '); }
 
+function meaningInputParts(s){
+  return s
+    .split(/\s*(?:,|;|\/|\bund\b|\+|&)\s*/i)
+    .map(p=>norm(p))
+    .filter(Boolean);
+}
+
+function buildMeaningLookup(meanings){
+  const exact = new Set();
+  meanings.forEach(m => {
+    const n = norm(m);
+    if(n) exact.add(n);
+    m.split('/').forEach(part => {
+      const pn = norm(part);
+      if(pn) exact.add(pn);
+    });
+  });
+  return exact;
+}
+
+function isMeaningMatch(part, lookup){
+  if(!part) return false;
+  if(lookup.has(part)) return true;
+  return Array.from(lookup).some(v => v.split(' ').includes(part) && part.length>3);
+}
+
 // Normalisierung für Stammformen (entfernt nur Leerzeichen und normalisiert Makrons)
 function normStf(s){
   return s.trim().toLowerCase()
@@ -71,8 +97,10 @@ function qCheck(){
   const w=qWords[qIdx];
   const raw=document.getElementById('q-input').value;
   if(!raw.trim()) return;
-  const un=norm(raw);
-  const isOk=w.de.some(d=>norm(d)===un||(norm(d).split(' ').includes(un)&&un.length>3));
+  const lookup = buildMeaningLookup(w.de || []);
+  const parts = meaningInputParts(raw);
+  const uniqueParts = [...new Set(parts)];
+  const isOk = uniqueParts.length>0 && uniqueParts.every(p => isMeaningMatch(p, lookup));
   qAnswered=true;
   document.getElementById('q-input').disabled=true;
   if(isOk){ qRight++; } else { qWrong++; }
