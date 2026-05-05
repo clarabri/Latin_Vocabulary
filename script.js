@@ -101,6 +101,32 @@ function normStf(s){
     .replace(/\s+/g,' ');
 }
 
+function stfTokens(s){
+  return normStf(s)
+    .split(' ')
+    .map(t => t.trim())
+    .filter(Boolean);
+}
+
+function isStfMatch(rawInput, expectedStf){
+  const inputNorm = normStf(rawInput);
+  const expectedNorm = normStf(expectedStf);
+  if(!inputNorm || !expectedNorm) return false;
+  if(inputNorm === expectedNorm) return true;
+
+  const inputTokens = stfTokens(rawInput);
+  const expectedTokens = stfTokens(expectedStf);
+  if(!inputTokens.length || !expectedTokens.length) return false;
+
+  const remaining = [...expectedTokens];
+  for(const tok of inputTokens){
+    const idx = remaining.indexOf(tok);
+    if(idx === -1) return false;
+    remaining.splice(idx, 1);
+  }
+  return true;
+}
+
 function qCheck(){
   if(qAnswered) return;
   const w=qWords[qIdx];
@@ -440,8 +466,7 @@ function qCheckStf(){
   const w=qWordsStf[qIdxStf];
   const raw=document.getElementById('q-input-stf').value;
   if(!raw.trim()) return;
-  const un=normStf(raw);
-  const isOk=normStf(w.stf)===un;
+  const isOk=isStfMatch(raw, w.stf);
   qAnsweredStf=true;
   document.getElementById('q-input-stf').disabled=true;
   if(isOk){ qRightStf++; } else { qWrongStf++; }
