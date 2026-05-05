@@ -69,8 +69,12 @@ function meaningInputParts(s){
 function buildMeaningLookup(meanings){
   const exact = new Set();
   meanings.forEach(m => {
+    if(typeof m !== 'string') return;
     const n = norm(m);
     if(n) exact.add(n);
+    meaningInputParts(m).forEach(part => {
+      if(part) exact.add(part);
+    });
     m.split('/').forEach(part => {
       const pn = norm(part);
       if(pn) exact.add(pn);
@@ -85,11 +89,16 @@ function isMeaningMatch(part, lookup){
   return Array.from(lookup).some(v => v.split(' ').includes(part) && part.length>3);
 }
 
-// Normalisierung für Stammformen (entfernt nur Leerzeichen und normalisiert Makrons)
+// Normalisierung für Stammformen (ignoriert Makrons und gängige Satzzeichen)
 function normStf(s){
-  return s.trim().toLowerCase()
-    .replace(/[āēīōū]/g, c=>({ā:'a',ē:'e',ī:'i',ō:'o',ū:'u'}[c]||c))  // Makrons entfernen
-    .replace(/\s+/g,' ');  // Mehrfach-Leerzeichen normalisieren
+  return String(s || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[āēīōū]/g, c=>({ā:'a',ē:'e',ī:'i',ō:'o',ū:'u'}[c]||c))
+    // Punkte/Kommas/ähnliche Trenner angleichen, damit z.B. "m." und "m" gleich behandelt werden.
+    .replace(/[.,;:/()\[\]{}]/g, ' ')
+    .replace(/[^a-z0-9\s-]/g, ' ')
+    .replace(/\s+/g,' ');
 }
 
 function qCheck(){
