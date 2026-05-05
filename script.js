@@ -306,6 +306,94 @@ function renderQReviewTable(){
   if(empty) empty.style.display = qReviewRows.length ? 'none' : 'block';
 }
 
+function qDownloadReviewPdf(){
+  const knownRows = qReviewRows.filter(row => row.knew);
+  if(!knownRows.length){
+    alert('Du hast in diesem Durchlauf noch keine Vokabel als gewusst markiert.');
+    return;
+  }
+
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    alert('PDF-Bibliothek konnte nicht geladen werden. Bitte Seite neu laden und erneut versuchen.');
+    return;
+  }
+
+  const doc = new window.jspdf.jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+  const margin = 14;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const tableWidth = pageWidth - margin * 2;
+  const colWidths = [58, 118];
+  const lineHeight = 5;
+  const topY = 16;
+
+  const today = new Date();
+  const dateLabel = today.toLocaleDateString('de-DE');
+  const total = qRight + qWrong + qSkipped;
+  const scoreText = `${qRight} / ${total}`;
+
+  let y = topY;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('Vokabelabfrage - Gewusste Vokabeln', margin, y);
+
+  y += 7;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.text(`Datum: ${dateLabel}`, margin, y);
+  y += 6;
+  doc.text(`Ergebnis: ${scoreText}`, margin, y);
+  y += 8;
+
+  function drawHeader(){
+    doc.setFillColor(240, 236, 227);
+    doc.rect(margin, y, tableWidth, 8, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('Vokabel', margin + 2, y + 5.5);
+    doc.text('Bedeutung', margin + colWidths[0] + 2, y + 5.5);
+    doc.setDrawColor(205, 195, 180);
+    doc.rect(margin, y, tableWidth, 8);
+    doc.line(margin + colWidths[0], y, margin + colWidths[0], y + 8);
+    y += 8;
+  }
+
+  drawHeader();
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10.5);
+
+  knownRows
+    .slice()
+    .sort((a, b) => (a.la || '').localeCompare(b.la || '', 'de'))
+    .forEach(row => {
+      const leftText = row.la || '—';
+      const rightText = row.de || '—';
+      const leftLines = doc.splitTextToSize(leftText, colWidths[0] - 4);
+      const rightLines = doc.splitTextToSize(rightText, colWidths[1] - 4);
+      const maxLines = Math.max(leftLines.length, rightLines.length, 1);
+      const rowHeight = Math.max(8, maxLines * lineHeight + 2);
+
+      if(y + rowHeight > pageHeight - margin){
+        doc.addPage();
+        y = topY;
+        drawHeader();
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10.5);
+      }
+
+      doc.setDrawColor(222, 214, 201);
+      doc.rect(margin, y, tableWidth, rowHeight);
+      doc.line(margin + colWidths[0], y, margin + colWidths[0], y + rowHeight);
+      doc.text(leftLines, margin + 2, y + 5);
+      doc.text(rightLines, margin + colWidths[0] + 2, y + 5);
+      y += rowHeight;
+    });
+
+  const fileDate = today.toISOString().slice(0, 10);
+  doc.save(`gewusste-vokabeln-${fileDate}.pdf`);
+}
+
 function qDone(){
   const qm = document.getElementById('quiz-main'); if(qm) qm.style.display='none';
   const d=document.getElementById('q-done'); if(d) d.classList.add('show');

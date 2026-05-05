@@ -129,7 +129,10 @@
             </div>
             <div id="q-review-empty" class="done-review-empty">Noch keine Ergebnisse vorhanden.</div>
           </div>
-          <button class="btn btn-red" onclick="qRestart()">Nochmal üben</button>
+          <div class="btn-row done-actions">
+            <button class="btn btn-ghost" onclick="qDownloadReviewPdf()">Gewusste als PDF</button>
+            <button class="btn btn-red" onclick="qRestart()">Nochmal üben</button>
+          </div>
         </div>
       </div>
     </div>
@@ -245,6 +248,7 @@
 
 <!-- load external lesson data (defines `defaultLessonData`) -->
 <script src="./lesson-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="./script.js"></script>
 </body>
 </html>

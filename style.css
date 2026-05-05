@@ -394,6 +394,10 @@ p { margin-bottom: 1rem; }
   color: var(--ink3);
 }
 
+.done-actions {
+  justify-content: center;
+}
+
 /* ── TRANSLATION ── */
 .transl-wrap {
   display: grid;
