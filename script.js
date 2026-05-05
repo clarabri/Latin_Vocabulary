@@ -25,12 +25,14 @@ function showTab(id) {
 // VOCAB QUIZ
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 let qWords=[], qIdx=0, qRight=0, qWrong=0, qSkipped=0, qAnswered=false;
+let qReviewRows=[];
 
 function shuffle2(arr){ return shuffle(arr); }
 
 function qStart(){
   qWords = shuffle2(vocabData);
   qIdx=0; qRight=0; qWrong=0; qSkipped=0; qAnswered=false;
+  qReviewRows=[];
   const done = document.getElementById('q-done'); if(done) done.classList.remove('show');
   const qm = document.getElementById('quiz-main'); if(qm) qm.style.display='';
   qLoad();
@@ -152,6 +154,11 @@ function qCheck(){
   qAnswered=true;
   document.getElementById('q-input').disabled=true;
   if(isOk){ qRight++; } else { qWrong++; }
+  qReviewRows.push({
+    la: w.la,
+    de: (w.de || []).join(', '),
+    knew: isOk
+  });
   qUpdatePills();
   const fb=document.getElementById('q-feedback');
   if(fb) fb.className='feedback '+(isOk?'ok':'err')+' show';
@@ -169,6 +176,11 @@ function qSkip(){
   const w=qWords[qIdx];
   qAnswered=true;
   document.getElementById('q-input').disabled=true;
+  qReviewRows.push({
+    la: w.la,
+    de: (w.de || []).join(', '),
+    knew: false
+  });
   qUpdatePills();
   const fb=document.getElementById('q-feedback'); if(fb) fb.className='feedback err show';
   document.getElementById('q-fb-title').textContent='Übersprungen – Antwort:';
@@ -226,6 +238,34 @@ function hideQContext(){
   setTimeout(()=>{ if(box) box.style.display='none'; }, 240);
 }
 
+function renderQReviewTable(){
+  const body = document.getElementById('q-review-body');
+  if(!body) return;
+
+  body.innerHTML = '';
+  qReviewRows.forEach(row => {
+    const tr = document.createElement('tr');
+
+    const tdLa = document.createElement('td');
+    tdLa.textContent = row.la || '—';
+
+    const tdDe = document.createElement('td');
+    tdDe.textContent = row.de || '—';
+
+    const tdKnew = document.createElement('td');
+    tdKnew.textContent = row.knew ? 'Ja' : 'Nein';
+    tdKnew.className = row.knew ? 'q-review-yes' : 'q-review-no';
+
+    tr.appendChild(tdLa);
+    tr.appendChild(tdDe);
+    tr.appendChild(tdKnew);
+    body.appendChild(tr);
+  });
+
+  const empty = document.getElementById('q-review-empty');
+  if(empty) empty.style.display = qReviewRows.length ? 'none' : 'block';
+}
+
 function qDone(){
   const qm = document.getElementById('quiz-main'); if(qm) qm.style.display='none';
   const d=document.getElementById('q-done'); if(d) d.classList.add('show');
@@ -236,6 +276,7 @@ function qDone(){
   const dsRight = document.getElementById('ds-right'); if(dsRight) dsRight.textContent=qRight;
   const dsWrong = document.getElementById('ds-wrong'); if(dsWrong) dsWrong.textContent=qWrong;
   const dsSkip = document.getElementById('ds-skip'); if(dsSkip) dsSkip.textContent=qSkipped;
+  renderQReviewTable();
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
