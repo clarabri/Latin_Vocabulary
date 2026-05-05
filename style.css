@@ -369,6 +369,14 @@ p { margin-bottom: 1rem; }
   border-bottom: none;
 }
 
+.done-review-table tr.q-review-row-yes td {
+  background: #edf7ed;
+}
+
+.done-review-table tr.q-review-row-no td {
+  background: #fdf3f1;
+}
+
 .done-review-table td.q-review-yes {
   color: var(--green);
   font-weight: 600;

@@ -238,13 +238,50 @@ function hideQContext(){
   setTimeout(()=>{ if(box) box.style.display='none'; }, 240);
 }
 
+function ensureQReviewUI(){
+  const done = document.getElementById('q-done');
+  if(!done) return null;
+
+  let body = document.getElementById('q-review-body');
+  if(body) return body;
+
+  const review = document.createElement('div');
+  review.className = 'done-review';
+  review.innerHTML = `
+    <div class="done-review-title">Dein Durchlauf</div>
+    <div class="done-review-table-wrap">
+      <table class="done-review-table">
+        <thead>
+          <tr>
+            <th>Vokabel</th>
+            <th>Bedeutung</th>
+            <th>Gewusst?</th>
+          </tr>
+        </thead>
+        <tbody id="q-review-body"></tbody>
+      </table>
+    </div>
+    <div id="q-review-empty" class="done-review-empty">Noch keine Ergebnisse vorhanden.</div>
+  `;
+
+  const restartBtn = done.querySelector('button[onclick="qRestart()"]');
+  if(restartBtn) done.insertBefore(review, restartBtn);
+  else done.appendChild(review);
+
+  body = document.getElementById('q-review-body');
+  return body;
+}
+
 function renderQReviewTable(){
-  const body = document.getElementById('q-review-body');
+  const body = ensureQReviewUI();
   if(!body) return;
 
   body.innerHTML = '';
-  qReviewRows.forEach(row => {
+  const sortedRows = [...qReviewRows].sort((a, b) => Number(a.knew) - Number(b.knew));
+
+  sortedRows.forEach(row => {
     const tr = document.createElement('tr');
+    tr.className = row.knew ? 'q-review-row-yes' : 'q-review-row-no';
 
     const tdLa = document.createElement('td');
     tdLa.textContent = row.la || '—';
@@ -276,6 +313,7 @@ function qDone(){
   const dsRight = document.getElementById('ds-right'); if(dsRight) dsRight.textContent=qRight;
   const dsWrong = document.getElementById('ds-wrong'); if(dsWrong) dsWrong.textContent=qWrong;
   const dsSkip = document.getElementById('ds-skip'); if(dsSkip) dsSkip.textContent=qSkipped;
+  ensureQReviewUI();
   renderQReviewTable();
 }
 
