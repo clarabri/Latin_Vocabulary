@@ -130,6 +130,7 @@
             <div id="q-review-empty" class="done-review-empty">Noch keine Ergebnisse vorhanden.</div>
           </div>
           <div class="btn-row done-actions">
+            <button class="btn btn-ghost" onclick="qDownloadAllReviewPdf()">Alle als PDF</button>
             <button class="btn btn-ghost" onclick="qDownloadReviewPdf()">Gewusste als PDF</button>
             <button class="btn btn-red" onclick="qRestart()">Nochmal üben</button>
           </div>
@@ -223,26 +224,6 @@
     </div>
 </div><!-- /shell -->
 
-<!-- DATA EDITOR (hidden by default) -->
-<div id="data-editor-panel" style="display:none; position:fixed; right:18px; bottom:80px; width:520px; max-width:calc(100% - 40px); height:420px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow); border-radius:10px; z-index:9999; padding:12px; overflow:auto;">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap;">
-    <div style="display:flex;gap:8px;align-items:center;">
-      <strong>Daten bearbeiten (JSON)</strong>
-      <select id="data-lesson-select" style="font-family:inherit;padding:6px;border-radius:6px;border:1px solid var(--border);"></select>
-      <input id="data-lesson-name" placeholder="Lektions-Name" style="padding:6px;border-radius:6px;border:1px solid var(--border);min-width:160px;">
-    </div>
-    <div>
-      <button class="btn btn-ghost" onclick="resetDefaultData()">Reset</button>
-      <button class="btn btn-ghost" onclick="document.getElementById('data-editor-panel').style.display='none'">Schließen</button>
-    </div>
-  </div>
-  <textarea id="data-editor" style="width:100%;height:260px;font-family:monospace;font-size:13px;padding:8px;border:1px solid var(--border2);border-radius:8px;"></textarea>
-  <div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end;">
-    <button class="btn btn-green" onclick="applyDataEditor()">Übernehmen</button>
-    <button class="btn btn-ghost" onclick="exportMappingCSV()" title="Exportiere die deutsche→lateinische Liste als CSV">Export CSV</button>
-    <button class="btn btn-ghost" onclick="exportMappingHTML()" title="Exportiere die deutsche→lateinische Liste als HTML-Tabelle">Export HTML</button>
-  </div>
-</div>
 
 <button id="data-editor-toggle" onclick="openDataEditor()" style="position:fixed;right:18px;bottom:18px;background:var(--gold2);border:none;padding:10px 12px;border-radius:10px;box-shadow:var(--shadow);z-index:9999;cursor:pointer">Daten bearbeiten</button>
 

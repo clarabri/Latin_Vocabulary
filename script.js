@@ -306,24 +306,23 @@ function renderQReviewTable(){
   if(empty) empty.style.display = qReviewRows.length ? 'none' : 'block';
 }
 
-function qDownloadReviewPdf(){
-  const knownRows = qReviewRows.filter(row => row.knew);
-  if(!knownRows.length){
-    alert('Du hast in diesem Durchlauf noch keine Vokabel als gewusst markiert.');
-    return;
-  }
-
+function qBuildReviewPdf(rows, options){
   if(!window.jspdf || !window.jspdf.jsPDF){
     alert('PDF-Bibliothek konnte nicht geladen werden. Bitte Seite neu laden und erneut versuchen.');
     return;
   }
+
+  const opts = options || {};
+  const title = opts.title || 'Vokabelabfrage - Ergebnis';
+  const includeStatus = !!opts.includeStatus;
+  const filenamePrefix = opts.filenamePrefix || 'vokabelabfrage-ergebnis';
 
   const doc = new window.jspdf.jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
   const margin = 14;
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const tableWidth = pageWidth - margin * 2;
-  const colWidths = [58, 118];
+  const colWidths = includeStatus ? [50, 106, 24] : [58, 118];
   const lineHeight = 5;
   const topY = 16;
 
@@ -335,7 +334,7 @@ function qDownloadReviewPdf(){
   let y = topY;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(16);
-  doc.text('Vokabelabfrage - Gewusste Vokabeln', margin, y);
+  doc.text(title, margin, y);
 
   y += 7;
   doc.setFont('helvetica', 'normal');
@@ -352,9 +351,15 @@ function qDownloadReviewPdf(){
     doc.setFontSize(11);
     doc.text('Vokabel', margin + 2, y + 5.5);
     doc.text('Bedeutung', margin + colWidths[0] + 2, y + 5.5);
+    if(includeStatus){
+      doc.text('Gewusst', margin + colWidths[0] + colWidths[1] + 2, y + 5.5);
+    }
     doc.setDrawColor(205, 195, 180);
     doc.rect(margin, y, tableWidth, 8);
     doc.line(margin + colWidths[0], y, margin + colWidths[0], y + 8);
+    if(includeStatus){
+      doc.line(margin + colWidths[0] + colWidths[1], y, margin + colWidths[0] + colWidths[1], y + 8);
+    }
     y += 8;
   }
 
@@ -363,15 +368,17 @@ function qDownloadReviewPdf(){
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10.5);
 
-  knownRows
+  rows
     .slice()
     .sort((a, b) => (a.la || '').localeCompare(b.la || '', 'de'))
     .forEach(row => {
       const leftText = row.la || '—';
       const rightText = row.de || '—';
+      const statusText = row.knew ? 'Ja' : 'Nein';
       const leftLines = doc.splitTextToSize(leftText, colWidths[0] - 4);
-      const rightLines = doc.splitTextToSize(rightText, colWidths[1] - 4);
-      const maxLines = Math.max(leftLines.length, rightLines.length, 1);
+      const rightLines = doc.splitTextToSize(rightText, includeStatus ? colWidths[1] - 4 : colWidths[1] - 4);
+      const statusLines = includeStatus ? doc.splitTextToSize(statusText, colWidths[2] - 4) : [''];
+      const maxLines = Math.max(leftLines.length, rightLines.length, statusLines.length, 1);
       const rowHeight = Math.max(8, maxLines * lineHeight + 2);
 
       if(y + rowHeight > pageHeight - margin){
@@ -385,13 +392,46 @@ function qDownloadReviewPdf(){
       doc.setDrawColor(222, 214, 201);
       doc.rect(margin, y, tableWidth, rowHeight);
       doc.line(margin + colWidths[0], y, margin + colWidths[0], y + rowHeight);
+      if(includeStatus){
+        doc.line(margin + colWidths[0] + colWidths[1], y, margin + colWidths[0] + colWidths[1], y + rowHeight);
+      }
       doc.text(leftLines, margin + 2, y + 5);
       doc.text(rightLines, margin + colWidths[0] + 2, y + 5);
+      if(includeStatus){
+        doc.text(statusLines, margin + colWidths[0] + colWidths[1] + 2, y + 5);
+      }
       y += rowHeight;
     });
 
   const fileDate = today.toISOString().slice(0, 10);
-  doc.save(`gewusste-vokabeln-${fileDate}.pdf`);
+  doc.save(`${filenamePrefix}-${fileDate}.pdf`);
+}
+
+function qDownloadReviewPdf(){
+  const knownRows = qReviewRows.filter(row => row.knew);
+  if(!knownRows.length){
+    alert('Du hast in diesem Durchlauf noch keine Vokabel als gewusst markiert.');
+    return;
+  }
+
+  qBuildReviewPdf(knownRows, {
+    title: 'Vokabelabfrage - Gewusste Vokabeln',
+    includeStatus: false,
+    filenamePrefix: 'gewusste-vokabeln'
+  });
+}
+
+function qDownloadAllReviewPdf(){
+  if(!qReviewRows.length){
+    alert('Noch keine Ergebnisse vorhanden.');
+    return;
+  }
+
+  qBuildReviewPdf(qReviewRows, {
+    title: 'Vokabelabfrage - Gesamter Durchlauf',
+    includeStatus: true,
+    filenamePrefix: 'alle-vokabel-ergebnisse'
+  });
 }
 
 function qDone(){
