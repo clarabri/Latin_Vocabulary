@@ -88,6 +88,13 @@ function buildMeaningLookup(meanings){
 function isMeaningMatch(part, lookup){
   if(!part) return false;
   if(lookup.has(part)) return true;
+
+  // Akzeptiert mehrere Bedeutungen auch ohne Satzzeichen, z.B. "eid schwur".
+  if(part.includes(' ')){
+    const tokens = part.split(' ').filter(Boolean);
+    if(tokens.length > 1 && tokens.every(tok => lookup.has(tok))) return true;
+  }
+
   return Array.from(lookup).some(v => v.split(' ').includes(part) && part.length>3);
 }
 
