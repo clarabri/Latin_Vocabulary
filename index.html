@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latein · Vokabelabfrage · Lektion 41</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="shell">
+
+  <!-- TOP BAR -->
+    <!-- Hier wird das Skript importiert -->
+  <div class="topbar">
+    <div class="topbar-title">
+      <span class="dot"></span>
+      Latein
+      <span class="topbar-sub">Vokabelabfrage · Lektion 41</span>
+    </div>
+    <button class="btn btn-red" id="back-btn" onclick="location.href='../../index.html'" style="margin-left:12px;">zurück</button>
+  </div>
+
+
+
+  <!-- TAB NAV -->
+  <div class="tabnav" style="position:relative; z-index:20;">
+    <button class="tabbtn active" onclick="showTab('vquiz-de')" id="t-vquiz-de">
+      <span class="tabnum">I</span> Deutsch
+    </button>
+    <button class="tabbtn" onclick="showTab('vquiz-stf')" id="t-vquiz-stf">
+      <span class="tabnum">II</span> Stammformen
+    </button>
+  </div>
+
+  <!-- PANELS -->
+  <div class="panels">
+
+    <!-- ═══ PANEL 1: VOCAB QUIZ - DEUTSCH ═══ -->
+    <div class="panel active" id="panel-vquiz-de">
+      <div class="quiz-wrap">
+        <div id="quiz-main">
+          <div class="quiz-top">
+            <div class="eyebrow" id="q-eyebrow"><b>Vokabelabfrage:</b> Gib die jeweiligen Wortbedeutungen ein.</div>
+            <div class="stat-pills">
+              <span class="stat-pill sp-right" id="qsp-right">✓ 0</span>
+              <span class="stat-pill sp-wrong" id="qsp-wrong">✗ 0</span>
+              <span class="stat-pill sp-skip" id="qsp-skip">↷ 0</span>
+            </div>
+          </div>
+
+          <div class="progress-row">
+            <div class="progress-meta">
+              <span id="q-prog-lbl">Frage 1 / 22</span>
+              <span id="q-prog-pct">0 %</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="q-prog-fill" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="quiz-card">
+            <div class="qcard-word" id="qword">—</div>
+            <div class="qcard-type" id="qtype">—</div>
+
+            <div class="hint-row">
+              <button class="hint-btn" onclick="qShowHint()">Hinweis</button>
+              <span class="hint-val" id="q-hint-val"></span>
+            </div>
+
+            <input class="answer-input" id="q-input" type="text"
+              placeholder="Deine Antwort (Deutsch)…"
+              onkeydown="if(event.key==='Enter') qCheck()">
+
+            <div class="feedback" id="q-feedback">
+              <div class="fb-title" id="q-fb-title"></div>
+              <div class="fb-detail" id="q-fb-detail"></div>
+              <div class="fb-stf" id="q-fb-stf"></div>
+            </div>
+
+            <div class="btn-row" id="q-btns-check">
+              <button class="btn btn-red" onclick="qCheck()">Prüfen</button>
+              <button class="btn btn-ghost" onclick="qSkip()">Überspringen</button>
+            </div>
+            <div class="btn-row" id="q-btns-next" style="display:none">
+              <button class="btn btn-green" onclick="qNext()">Weiter →</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Context box: erscheint nach Beantwortung einer Vokabel -->
+        <aside id="q-context" class="q-context" style="display:none;">
+          <div class="eyebrow"><span class="q-icon" id="q-context-icon">T</span>Kontext</div>
+          <div id="q-context-latin" style="font-family: 'Playfair Display', serif; font-size:1.05rem; margin-top:8px; white-space:pre-wrap;"></div>
+          <div id="q-context-de" style="margin-top:10px; color:var(--ink2);"></div>
+        </aside>
+
+        <!-- Done screen -->
+        <div class="done-screen" id="q-done">
+          <div class="done-big" id="done-score">—</div>
+          <div class="done-sub" id="done-msg"></div>
+          <div class="stat-grid">
+            <div class="stat-block sb-right">
+              <div class="stat-num" id="ds-right">0</div>
+              <div class="stat-lbl">Richtig</div>
+            </div>
+            <div class="stat-block sb-wrong">
+              <div class="stat-num" id="ds-wrong">0</div>
+              <div class="stat-lbl">Falsch</div>
+            </div>
+            <div class="stat-block sb-skip">
+              <div class="stat-num" id="ds-skip">0</div>
+              <div class="stat-lbl">Übersprungen</div>
+            </div>
+          </div>
+          <button class="btn btn-red" onclick="qRestart()">Nochmal üben</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PANEL 2: VOCAB QUIZ - STAMMFORMEN ═══ -->
+    <div class="panel" id="panel-vquiz-stf">
+      <div style="display:flex; gap:20px; align-items:flex-start;">
+        <div class="quiz-wrap" style="flex:1;">
+          <div id="quiz-main-stf">
+            <div class="quiz-top">
+              <div class="eyebrow" id="q-eyebrow-stf"><b>Stammformen-Abfrage:</b></div>
+              <div class="stat-pills">
+                <span class="stat-pill sp-right" id="qsp-right-stf">✓ 0</span>
+                <span class="stat-pill sp-wrong" id="qsp-wrong-stf">✗ 0</span>
+                <span class="stat-pill sp-skip" id="qsp-skip-stf">↷ 0</span>
+              </div>
+            </div>
+
+            <div class="progress-row">
+              <div class="progress-meta">
+                <span id="q-prog-lbl-stf">Frage 1 / 22</span>
+                <span id="q-prog-pct-stf">0 %</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="q-prog-fill-stf" style="width:0%"></div>
+              </div>
+            </div>
+
+            <div class="quiz-card">
+              <div class="qcard-word" id="qword-stf">—</div>
+            <div class="qcard-type" id="qtype-stf">—</div>
+
+            <div class="hint-row">
+              <button class="hint-btn" onclick="qShowHintStf()">Hinweis</button>
+              <span class="hint-val" id="q-hint-val-stf"></span>
+            </div>
+
+            <input class="answer-input" id="q-input-stf" type="text"
+              placeholder="Stammformen eingeben…"
+              onkeydown="if(event.key==='Enter') qCheckStf()">
+
+            <div class="feedback" id="q-feedback-stf">
+              <div class="fb-title" id="q-fb-title-stf"></div>
+              <div class="fb-detail" id="q-fb-detail-stf"></div>
+              <div class="fb-meaning" id="q-fb-meaning-stf" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border);"></div>
+              <div class="fb-stf" id="q-fb-stf-stf"></div>
+            </div>
+
+            <div class="btn-row" id="q-btns-check-stf">
+              <button class="btn btn-red" onclick="qCheckStf()">Prüfen</button>
+              <button class="btn btn-ghost" onclick="qSkipStf()">Überspringen</button>
+            </div>
+            <div class="btn-row" id="q-btns-next-stf" style="display:none">
+              <button class="btn btn-green" onclick="qNextStf()">Weiter →</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Context box: erscheint nach Beantwortung einer Vokabel -->
+        <aside id="q-context-stf" class="q-context" style="display:none;">
+          <div class="eyebrow"><span class="q-icon" id="q-context-icon-stf">T</span>Kontext</div>
+          <div id="q-context-latin-stf" style="font-family: 'Playfair Display', serif; font-size:1.05rem; margin-top:8px; white-space:pre-wrap;"></div>
+          <div id="q-context-de-stf" style="margin-top:10px; color:var(--ink2);"></div>
+        </aside>
+
+        <!-- Done screen -->
+        <div class="done-screen" id="q-done-stf">
+          <div class="done-big" id="done-score-stf">—</div>
+          <div class="done-sub" id="done-msg-stf"></div>
+          <div class="stat-grid">
+            <div class="stat-block sb-right">
+              <div class="stat-num" id="ds-right-stf">0</div>
+              <div class="stat-lbl">Richtig</div>
+            </div>
+            <div class="stat-block sb-wrong">
+              <div class="stat-num" id="ds-wrong-stf">0</div>
+              <div class="stat-lbl">Falsch</div>
+            </div>
+            <div class="stat-block sb-skip">
+              <div class="stat-num" id="ds-skip-stf">0</div>
+              <div class="stat-lbl">Übersprungen</div>
+            </div>
+          </div>
+          <button class="btn btn-red" onclick="qRestartStf()">Nochmal üben</button>
+        </div>
+      </div>
+
+        <!-- Anweisungs-Box rechts -->
+        <aside style="width:320px; flex-shrink:0;">
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; font-size:14px; line-height:1.6; color:var(--ink2); position:sticky; top:20px;">
+            <div style="font-weight:500; margin-bottom:10px; color:var(--ink1); display:flex; align-items:center; gap:6px;">
+              <span style="font-size:16px;">📝</span> Anweisung
+            </div>
+            <div style="margin-bottom:8px; font-size:13px;">Gib nur die Stammformen bzw. die Zusatzangaben ein.</div>
+            <div style="margin-bottom:10px; font-size:13px;">Trenne mehrere Angaben durch ein Komma und gib das Geschlecht so an: <strong>m.</strong> oder <strong>f.</strong> oder <strong>n.</strong></div>
+            <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border); font-size:12px;">
+              <div style="margin-bottom:6px;"><strong>Beispiel 1:</strong></div>
+              <div style="margin-bottom:8px; padding:6px; background:var(--surface2); border-radius:4px; font-family:monospace; font-size:11px;">victoria → victoriae, f.</div>
+              <div style="margin-bottom:6px; margin-top:10px;"><strong>Beispiel 2:</strong></div>
+              <div style="padding:6px; background:var(--surface2); border-radius:4px; font-family:monospace; font-size:11px;">concedere → concedo, concessi, concessum</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+</div><!-- /shell -->
+
+<!-- DATA EDITOR (hidden by default) -->
+<div id="data-editor-panel" style="display:none; position:fixed; right:18px; bottom:80px; width:520px; max-width:calc(100% - 40px); height:420px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow); border-radius:10px; z-index:9999; padding:12px; overflow:auto;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap;">
+    <div style="display:flex;gap:8px;align-items:center;">
+      <strong>Daten bearbeiten (JSON)</strong>
+      <select id="data-lesson-select" style="font-family:inherit;padding:6px;border-radius:6px;border:1px solid var(--border);"></select>
+      <input id="data-lesson-name" placeholder="Lektions-Name" style="padding:6px;border-radius:6px;border:1px solid var(--border);min-width:160px;">
+    </div>
+    <div>
+      <button class="btn btn-ghost" onclick="resetDefaultData()">Reset</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('data-editor-panel').style.display='none'">Schließen</button>
+    </div>
+  </div>
+  <textarea id="data-editor" style="width:100%;height:260px;font-family:monospace;font-size:13px;padding:8px;border:1px solid var(--border2);border-radius:8px;"></textarea>
+  <div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end;">
+    <button class="btn btn-green" onclick="applyDataEditor()">Übernehmen</button>
+    <button class="btn btn-ghost" onclick="exportMappingCSV()" title="Exportiere die deutsche→lateinische Liste als CSV">Export CSV</button>
+    <button class="btn btn-ghost" onclick="exportMappingHTML()" title="Exportiere die deutsche→lateinische Liste als HTML-Tabelle">Export HTML</button>
+  </div>
+</div>
+
+<button id="data-editor-toggle" onclick="openDataEditor()" style="position:fixed;right:18px;bottom:18px;background:var(--gold2);border:none;padding:10px 12px;border-radius:10px;box-shadow:var(--shadow);z-index:9999;cursor:pointer">Daten bearbeiten</button>
+
+<!-- load external lesson data (defines `defaultLessonData`) -->
+<script src="./lesson-data.js"></script>
+<script src="./script.js"></script>
+</body>
+</html>
