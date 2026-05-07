@@ -370,8 +370,12 @@ function qBuildReviewPdf(rows, options){
   const title = opts.title || 'Vokabelabfrage - Ergebnis';
   const includeStatus = !!opts.includeStatus;
   const filenamePrefix = opts.filenamePrefix || 'vokabelabfrage-ergebnis';
-  const rowFillKnown = [226, 245, 229];
-  const rowFillUnknown = [255, 235, 235];
+  const rowFillKnown = [220, 245, 220];
+  const rowFillUnknown = [255, 220, 220];
+  const orderedRows = [
+    ...rows.filter(row => row.knew !== true),
+    ...rows.filter(row => row.knew === true)
+  ];
 
   const doc = new window.jspdf.jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
   const margin = 14;
@@ -424,14 +428,7 @@ function qBuildReviewPdf(rows, options){
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10.5);
 
-  rows
-    .slice()
-    .sort((a, b) => {
-      const byKnowledge = Number(a.knew) - Number(b.knew);
-      if(byKnowledge !== 0) return byKnowledge;
-      return (a.la || '').localeCompare(b.la || '', 'de');
-    })
-    .forEach(row => {
+  orderedRows.forEach(row => {
       const leftText = row.la || '—';
       const rightText = row.de || '—';
       const statusText = row.knew ? 'Ja' : 'Nein';
@@ -932,8 +929,12 @@ function qBuildReviewPdfStf(rows, options){
   const opts = options || {};
   const title = opts.title || 'Stammformen-Abfrage - Gesamter Durchlauf';
   const filenamePrefix = opts.filenamePrefix || 'stammformen-ergebnisse';
-  const rowFillKnown = [226, 245, 229];
-  const rowFillUnknown = [255, 235, 235];
+  const rowFillKnown = [220, 245, 220];
+  const rowFillUnknown = [255, 220, 220];
+  const orderedRows = [
+    ...rows.filter(row => row.knew !== true),
+    ...rows.filter(row => row.knew === true)
+  ];
 
   const doc = new window.jspdf.jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
   const margin = 14;
@@ -984,14 +985,7 @@ function qBuildReviewPdfStf(rows, options){
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
 
-  rows
-    .slice()
-    .sort((a, b) => {
-      const byKnowledge = Number(a.knew) - Number(b.knew);
-      if(byKnowledge !== 0) return byKnowledge;
-      return (a.la || '').localeCompare(b.la || '', 'de');
-    })
-    .forEach(row => {
+  orderedRows.forEach(row => {
       const laText = row.la || '—';
       const stfText = row.stf || '—';
       const deText = row.de || '—';
