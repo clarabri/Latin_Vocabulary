@@ -63,6 +63,123 @@ p { margin-bottom: 1rem; }
 .topbar-title .dot { width: 8px; height: 8px; background: var(--gold2); border-radius: 50%; display: inline-block; }
 .topbar-sub { font-size: 11px; font-weight: 300; opacity: 0.55; letter-spacing: 0.08em; text-transform: uppercase; }
 
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.mnemonic-edit {
+  padding: 0.45rem 0.9rem;
+  font-size: 13px;
+  color: #fff;
+  border-color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.08);
+}
+
+.mnemonic-edit:hover {
+  border-color: var(--gold2);
+  color: var(--gold2);
+}
+
+.mnemonic-toggle {
+  padding: 0.45rem 0.9rem;
+  font-size: 13px;
+  color: #fff;
+  border-color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.08);
+}
+
+.mnemonic-toggle:hover {
+  border-color: var(--gold2);
+  color: var(--gold2);
+}
+
+.mnemonic-toggle.off {
+  color: rgba(255,255,255,0.7);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.mnemonic-setup {
+  padding: 2.2rem 1.2rem 2.8rem;
+}
+
+.mnemonic-card {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow2);
+  padding: 1.8rem;
+}
+
+.mnemonic-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.mnemonic-progress {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--ink3);
+}
+
+.mn-word {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  line-height: 1.2;
+  color: var(--red);
+}
+
+.mn-stf {
+  margin-top: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--ink2);
+}
+
+.mn-meaning {
+  margin-top: 10px;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.mn-label {
+  margin-top: 1rem;
+  display: inline-block;
+  font-size: 13px;
+  color: var(--ink2);
+}
+
+.mn-input {
+  width: 100%;
+  margin-top: 6px;
+  border: 1.5px solid var(--border2);
+  border-radius: 10px;
+  background: var(--surface2);
+  padding: 0.9rem 1rem;
+  font-family: 'Source Serif 4', serif;
+  font-size: 15px;
+  color: var(--ink);
+  resize: vertical;
+  min-height: 110px;
+  outline: none;
+}
+
+.mn-input:focus {
+  border-color: var(--gold);
+  background: var(--surface);
+}
+
+.mnemonic-actions {
+  margin-top: 1rem;
+}
+
 /* ── TAB NAV ── */
 .tabnav {
   background: var(--ink);
@@ -248,11 +365,53 @@ p { margin-bottom: 1rem; }
 .q-context #q-context-latin { font-style:normal; color:var(--ink); }
 .q-context #q-context-de { font-size:0.98rem; color:var(--ink2); }
 
+.q-mnemonic-box {
+  margin-top: 12px;
+  padding: 10px;
+  background: #fff8e5;
+  border: 1px solid rgba(196,154,42,0.35);
+  border-radius: 8px;
+  color: #4d3a12;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.q-mnemonic-title {
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  color: #7f6217;
+  margin-bottom: 4px;
+}
+
 /* responsive: stack on small screens */
 @media (max-width:900px){
   .quiz-wrap { flex-direction:column; }
   .q-context { transform: none; width: 100%; flex: 0 0 auto; order: 2; }
   .quiz-card { order: 1; }
+}
+
+@media (max-width:640px){
+  .topbar {
+    height: auto;
+    padding: 0.8rem 1rem;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .mnemonic-card {
+    padding: 1.2rem;
+  }
+  .mn-word {
+    font-size: 1.65rem;
+  }
 }
 
 .qcard-word {

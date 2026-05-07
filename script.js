@@ -5,6 +5,11 @@ const lessons = {
 };
 let currentLessonKey = Object.keys(lessons)[0];
 let lessonData = JSON.parse(JSON.stringify(lessons[currentLessonKey]));
+const MNEMONIC_STORAGE_KEY = 'latin-mnemonics';
+const MNEMONIC_VISIBILITY_KEY = 'latin-mnemonics-visible';
+let mnemonicMap = {};
+let mnemonicVisible = true;
+let mnemonicSetupIdx = 0;
 
 // basic array shuffle
 function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
@@ -19,6 +24,141 @@ function showTab(id) {
     const btn = document.getElementById('t-'+t);
     if(btn) btn.classList.toggle('active', t===id);
   });
+}
+
+function getMnemonicForWord(la){
+  return (mnemonicMap && la && mnemonicMap[la]) ? mnemonicMap[la] : '';
+}
+
+function updateMnemonicBox(wordLa, boxId, textId){
+  const box = document.getElementById(boxId);
+  const text = document.getElementById(textId);
+  if(!box || !text) return;
+
+  const memo = getMnemonicForWord(wordLa);
+  if(mnemonicVisible && memo){
+    text.textContent = memo;
+    box.style.display = '';
+  }else{
+    box.style.display = 'none';
+    text.textContent = '';
+  }
+}
+
+function refreshMnemonicToggleUI(){
+  const btn = document.getElementById('mnemonic-visibility-toggle');
+  if(!btn) return;
+  btn.textContent = `Eselsbrücken: ${mnemonicVisible ? 'an' : 'aus'}`;
+  btn.classList.toggle('off', !mnemonicVisible);
+}
+
+function saveMnemonicMap(){
+  localStorage.setItem(MNEMONIC_STORAGE_KEY, JSON.stringify(mnemonicMap || {}));
+}
+
+function loadMnemonicMap(){
+  try{
+    const raw = localStorage.getItem(MNEMONIC_STORAGE_KEY);
+    mnemonicMap = raw ? JSON.parse(raw) : {};
+  }catch(_e){
+    mnemonicMap = {};
+  }
+
+  const visibleRaw = localStorage.getItem(MNEMONIC_VISIBILITY_KEY);
+  mnemonicVisible = visibleRaw !== '0';
+  refreshMnemonicToggleUI();
+}
+
+function toggleMnemonicVisibility(){
+  mnemonicVisible = !mnemonicVisible;
+  localStorage.setItem(MNEMONIC_VISIBILITY_KEY, mnemonicVisible ? '1' : '0');
+  refreshMnemonicToggleUI();
+
+  const currentDe = qWords[qIdx] ? qWords[qIdx].la : '';
+  const currentStf = qWordsStf[qIdxStf] ? qWordsStf[qIdxStf].la : '';
+  updateMnemonicBox(currentDe, 'q-mnemonic-box', 'q-mnemonic-text');
+  updateMnemonicBox(currentStf, 'q-mnemonic-box-stf', 'q-mnemonic-text-stf');
+}
+
+function mnRender(){
+  const setup = document.getElementById('mnemonic-setup');
+  if(!setup) return;
+  if(!vocabData || !vocabData.length) return;
+
+  const total = vocabData.length;
+  if(mnemonicSetupIdx < 0) mnemonicSetupIdx = 0;
+  if(mnemonicSetupIdx >= total) mnemonicSetupIdx = total - 1;
+
+  const w = vocabData[mnemonicSetupIdx];
+  const progress = document.getElementById('mn-progress');
+  const word = document.getElementById('mn-word');
+  const stf = document.getElementById('mn-stf');
+  const meaning = document.getElementById('mn-meaning');
+  const input = document.getElementById('mn-input');
+  const prev = document.getElementById('mn-prev');
+  const next = document.getElementById('mn-next');
+  const save = document.getElementById('mn-save');
+
+  if(progress) progress.textContent = `Vokabel ${mnemonicSetupIdx+1} / ${total}`;
+  if(word) word.textContent = w.la || '—';
+  if(stf) stf.textContent = (w.stf && w.stf !== '—') ? `Stammformen: ${w.stf}` : 'Stammformen: —';
+  if(meaning) meaning.textContent = `Bedeutung: ${(w.de || []).join(', ') || '—'}`;
+  if(input) input.value = getMnemonicForWord(w.la);
+
+  if(prev) prev.disabled = mnemonicSetupIdx === 0;
+  if(next) next.style.display = mnemonicSetupIdx === total - 1 ? 'none' : '';
+  if(save) save.style.display = mnemonicSetupIdx === total - 1 ? '' : 'none';
+}
+
+function mnStoreCurrentInput(){
+  if(!vocabData || !vocabData.length) return;
+  const w = vocabData[mnemonicSetupIdx];
+  const input = document.getElementById('mn-input');
+  if(!w || !input) return;
+  mnemonicMap[w.la] = input.value.trim();
+}
+
+function mnPrev(){
+  mnStoreCurrentInput();
+  mnemonicSetupIdx = Math.max(0, mnemonicSetupIdx - 1);
+  mnRender();
+}
+
+function mnNext(){
+  mnStoreCurrentInput();
+  mnemonicSetupIdx = Math.min(vocabData.length - 1, mnemonicSetupIdx + 1);
+  mnRender();
+}
+
+function mnSaveAll(){
+  mnStoreCurrentInput();
+  saveMnemonicMap();
+
+  const setup = document.getElementById('mnemonic-setup');
+  const tabnav = document.querySelector('.tabnav');
+  const panels = document.querySelector('.panels');
+  if(setup) setup.style.display = 'none';
+  if(tabnav) tabnav.style.display = '';
+  if(panels) panels.style.display = '';
+
+  updateMnemonicBox('', 'q-mnemonic-box', 'q-mnemonic-text');
+  updateMnemonicBox('', 'q-mnemonic-box-stf', 'q-mnemonic-text-stf');
+  showTab('vquiz-de');
+}
+
+function startMnemonicSetup(){
+  const setup = document.getElementById('mnemonic-setup');
+  const tabnav = document.querySelector('.tabnav');
+  const panels = document.querySelector('.panels');
+  if(setup) setup.style.display = '';
+  if(tabnav) tabnav.style.display = 'none';
+  if(panels) panels.style.display = 'none';
+  mnemonicSetupIdx = 0;
+  mnRender();
+}
+
+function openMnemonicEditor(){
+  startMnemonicSetup();
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -54,6 +194,7 @@ function qLoad(){
   const btnsCheck=document.getElementById('q-btns-check'); if(btnsCheck) btnsCheck.style.display='';
   const btnsNext=document.getElementById('q-btns-next'); if(btnsNext) btnsNext.style.display='none';
   qUpdatePills();
+  showQContext(w.la);
   setTimeout(()=>{ const i=document.getElementById('q-input'); if(i) i.focus(); },50);
 }
 
@@ -251,9 +392,15 @@ function showQContext(la){
     // try to find mapping by exact match of la (or lemma part before comma)
     const key = (la||'').split(',')[0].trim();
     const entry = (contextMap||[]).find(e => (e.la||'').toLowerCase() === key.toLowerCase());
-    if(entry){
-      lat.textContent = entry.context + ':';
-      de.textContent = entry.translation;
+    const hasMnemonic = mnemonicVisible && !!getMnemonicForWord(la);
+    if(entry || hasMnemonic){
+      if(entry){
+        lat.textContent = entry.context + ':';
+        de.textContent = entry.translation;
+      }else{
+        lat.textContent = `Vokabel: ${la}`;
+        de.textContent = 'Eigene Eselsbrücke';
+      }
       // Icon aus vocabData suchen
       let iconName = null;
       if (window.vocabData) {
@@ -268,6 +415,7 @@ function showQContext(la){
           iconEl.textContent = 'T';
         }
       }
+      updateMnemonicBox(la, 'q-mnemonic-box', 'q-mnemonic-text');
       box.style.display = '';
       setTimeout(function(){ box.classList.add('visible'); }, 20);
     } else {
@@ -279,6 +427,7 @@ function hideQContext(){
   const box = document.getElementById('q-context');
   if(!box) return;
   box.classList.remove('visible');
+  updateMnemonicBox('', 'q-mnemonic-box', 'q-mnemonic-text');
   // wait for transition to finish then remove from flow
   setTimeout(()=>{ if(box) box.style.display='none'; }, 240);
 }
@@ -729,6 +878,7 @@ function qLoadStf(){
   const btnsCheck=document.getElementById('q-btns-check-stf'); if(btnsCheck) btnsCheck.style.display='';
   const btnsNext=document.getElementById('q-btns-next-stf'); if(btnsNext) btnsNext.style.display='none';
   qUpdatePillsStf();
+  showQContextStf(w.la);
   setTimeout(()=>{ const i=document.getElementById('q-input-stf'); if(i) i.focus(); },50);
 }
 
@@ -805,9 +955,15 @@ function showQContextStf(lat){
     // try to find mapping by exact match of la (or lemma part before comma)
     const key = (lat||'').split(',')[0].trim();
     const entry = (contextMap||[]).find(e => (e.la||'').toLowerCase() === key.toLowerCase());
-    if(entry){
-      latEl.textContent = entry.context + ':';
-      deEl.textContent = entry.translation;
+    const hasMnemonic = mnemonicVisible && !!getMnemonicForWord(lat);
+    if(entry || hasMnemonic){
+      if(entry){
+        latEl.textContent = entry.context + ':';
+        deEl.textContent = entry.translation;
+      }else{
+        latEl.textContent = `Vokabel: ${lat}`;
+        deEl.textContent = 'Eigene Eselsbrücke';
+      }
       // Icon aus vocabData suchen
       let iconName = null;
       if (window.vocabData) {
@@ -822,6 +978,7 @@ function showQContextStf(lat){
           iconEl.textContent = 'T';
         }
       }
+      updateMnemonicBox(lat, 'q-mnemonic-box-stf', 'q-mnemonic-text-stf');
       box.style.display = '';
       setTimeout(function(){ box.classList.add('visible'); }, 20);
     } else {
@@ -834,6 +991,7 @@ function hideQContextStf(){
   const box = document.getElementById('q-context-stf');
   if(!box) return;
   box.classList.remove('visible');
+  updateMnemonicBox('', 'q-mnemonic-box-stf', 'q-mnemonic-text-stf');
   // wait for transition to finish then remove from flow
   setTimeout(()=>{ if(box) box.style.display='none'; }, 240);
 }
@@ -1075,5 +1233,5 @@ function initLesson(){
 
 // initialize
 initLesson();
-// ensure tabs visible / default to first quiz (Deutsch)
-if(typeof showTab === 'function') showTab('vquiz-de');
+loadMnemonicMap();
+startMnemonicSetup();

@@ -18,8 +18,35 @@
       Latein
       <span class="topbar-sub">Vokabelabfrage · Lektion 41</span>
     </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost mnemonic-edit" id="mnemonic-edit-btn" onclick="openMnemonicEditor()">Eselsbrücken bearbeiten</button>
+      <button class="btn btn-ghost mnemonic-toggle" id="mnemonic-visibility-toggle" onclick="toggleMnemonicVisibility()">Eselsbrücken: an</button>
+    </div>
     <!-- <button class="btn btn-red" id="back-btn" onclick="location.href='../../index.html'" style="margin-left:12px;">zurück</button> -->
   </div>
+
+
+  <section id="mnemonic-setup" class="mnemonic-setup">
+    <div class="mnemonic-card">
+      <div class="mnemonic-head">
+        <div class="eyebrow"><b>Eselsbrücken speichern:</b> Schreibe zu jeder Vokabel deine eigene Merkhilfe.</div>
+        <div class="mnemonic-progress" id="mn-progress">Vokabel 1 / 22</div>
+      </div>
+
+      <div class="mn-word" id="mn-word">—</div>
+      <div class="mn-stf" id="mn-stf">—</div>
+      <div class="mn-meaning" id="mn-meaning">—</div>
+
+      <label class="mn-label" for="mn-input">Deine Eselsbrücke</label>
+      <textarea id="mn-input" class="mn-input" rows="4" placeholder="z.B. 'domi klingt wie Domizil, also zuhause'"></textarea>
+
+      <div class="btn-row mnemonic-actions">
+        <button class="btn btn-ghost" id="mn-prev" onclick="mnPrev()">← Zurück</button>
+        <button class="btn btn-red" id="mn-next" onclick="mnNext()">Weiter →</button>
+        <button class="btn btn-green" id="mn-save" onclick="mnSaveAll()" style="display:none;">Speichern</button>
+      </div>
+    </div>
+  </section>
 
 
 
@@ -93,6 +120,10 @@
           <div class="eyebrow"><span class="q-icon" id="q-context-icon">T</span>Kontext</div>
           <div id="q-context-latin" style="font-family: 'Playfair Display', serif; font-size:1.05rem; margin-top:8px; white-space:pre-wrap;"></div>
           <div id="q-context-de" style="margin-top:10px; color:var(--ink2);"></div>
+          <div id="q-mnemonic-box" class="q-mnemonic-box" style="display:none;">
+            <div class="q-mnemonic-title">Eselsbrücke</div>
+            <div id="q-mnemonic-text"></div>
+          </div>
         </aside>
 
         <!-- Done screen -->
@@ -196,6 +227,10 @@
           <div class="eyebrow"><span class="q-icon" id="q-context-icon-stf">T</span>Kontext</div>
           <div id="q-context-latin-stf" style="font-family: 'Playfair Display', serif; font-size:1.05rem; margin-top:8px; white-space:pre-wrap;"></div>
           <div id="q-context-de-stf" style="margin-top:10px; color:var(--ink2);"></div>
+          <div id="q-mnemonic-box-stf" class="q-mnemonic-box" style="display:none;">
+            <div class="q-mnemonic-title">Eselsbrücke</div>
+            <div id="q-mnemonic-text-stf"></div>
+          </div>
         </aside>
 
         <!-- Done screen -->
