@@ -370,6 +370,8 @@ function qBuildReviewPdf(rows, options){
   const title = opts.title || 'Vokabelabfrage - Ergebnis';
   const includeStatus = !!opts.includeStatus;
   const filenamePrefix = opts.filenamePrefix || 'vokabelabfrage-ergebnis';
+  const rowFillKnown = [226, 245, 229];
+  const rowFillUnknown = [255, 235, 235];
 
   const doc = new window.jspdf.jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
   const margin = 14;
@@ -424,7 +426,11 @@ function qBuildReviewPdf(rows, options){
 
   rows
     .slice()
-    .sort((a, b) => (a.la || '').localeCompare(b.la || '', 'de'))
+    .sort((a, b) => {
+      const byKnowledge = Number(a.knew) - Number(b.knew);
+      if(byKnowledge !== 0) return byKnowledge;
+      return (a.la || '').localeCompare(b.la || '', 'de');
+    })
     .forEach(row => {
       const leftText = row.la || '—';
       const rightText = row.de || '—';
@@ -443,6 +449,9 @@ function qBuildReviewPdf(rows, options){
         doc.setFontSize(10.5);
       }
 
+      const fill = row.knew ? rowFillKnown : rowFillUnknown;
+      doc.setFillColor(fill[0], fill[1], fill[2]);
+      doc.rect(margin, y, tableWidth, rowHeight, 'F');
       doc.setDrawColor(222, 214, 201);
       doc.rect(margin, y, tableWidth, rowHeight);
       doc.line(margin + colWidths[0], y, margin + colWidths[0], y + rowHeight);
@@ -923,6 +932,8 @@ function qBuildReviewPdfStf(rows, options){
   const opts = options || {};
   const title = opts.title || 'Stammformen-Abfrage - Gesamter Durchlauf';
   const filenamePrefix = opts.filenamePrefix || 'stammformen-ergebnisse';
+  const rowFillKnown = [226, 245, 229];
+  const rowFillUnknown = [255, 235, 235];
 
   const doc = new window.jspdf.jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
   const margin = 14;
@@ -975,7 +986,11 @@ function qBuildReviewPdfStf(rows, options){
 
   rows
     .slice()
-    .sort((a, b) => (a.la || '').localeCompare(b.la || '', 'de'))
+    .sort((a, b) => {
+      const byKnowledge = Number(a.knew) - Number(b.knew);
+      if(byKnowledge !== 0) return byKnowledge;
+      return (a.la || '').localeCompare(b.la || '', 'de');
+    })
     .forEach(row => {
       const laText = row.la || '—';
       const stfText = row.stf || '—';
@@ -998,6 +1013,9 @@ function qBuildReviewPdfStf(rows, options){
         doc.setFontSize(10);
       }
 
+      const fill = row.knew ? rowFillKnown : rowFillUnknown;
+      doc.setFillColor(fill[0], fill[1], fill[2]);
+      doc.rect(margin, y, tableWidth, rowHeight, 'F');
       doc.setDrawColor(222, 214, 201);
       doc.rect(margin, y, tableWidth, rowHeight);
       doc.line(margin + colWidths[0], y, margin + colWidths[0], y + rowHeight);
