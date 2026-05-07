@@ -68,21 +68,15 @@ function meaningInputParts(s){
     .filter(Boolean);
 }
 
-function buildMeaningLookup(meanings){
-  const exact = new Set();
+function buildMeaningVariants(meanings){
+  const variants = new Set();
   meanings.forEach(m => {
     if(typeof m !== 'string') return;
-    const n = norm(m);
-    if(n) exact.add(n);
     meaningInputParts(m).forEach(part => {
-      if(part) exact.add(part);
-    });
-    m.split('/').forEach(part => {
-      const pn = norm(part);
-      if(pn) exact.add(pn);
+      if(part) variants.add(part);
     });
   });
-  return exact;
+  return Array.from(variants);
 }
 
 function levenshtein(a, b){
@@ -110,39 +104,33 @@ function levenshtein(a, b){
   return dp[n][m];
 }
 
-function fuzzyTokenInLookup(token, lookup){
-  if(!token) return false;
-  if(lookup.has(token)) return true;
-
-  const candidates = new Set();
-  lookup.forEach(entry => {
-    if(!entry) return;
-    candidates.add(entry);
-    entry.split(' ').forEach(w => { if(w) candidates.add(w); });
-  });
-
-  for(const cand of candidates){
-    if(cand === token) return true;
-    const maxDist = Math.max(token.length, cand.length) >= 8 ? 2 : 1;
-    if(Math.min(token.length, cand.length) >= 4 && levenshtein(token, cand) <= maxDist) return true;
-  }
-  return false;
+function isFuzzyTokenMatch(inputToken, expectedToken){
+  if(!inputToken || !expectedToken) return false;
+  if(inputToken === expectedToken) return true;
+  const maxDist = Math.max(inputToken.length, expectedToken.length) >= 8 ? 2 : 1;
+  return Math.min(inputToken.length, expectedToken.length) >= 4 && levenshtein(inputToken, expectedToken) <= maxDist;
 }
 
-function isMeaningMatch(part, lookup){
+function isMeaningMatch(part, variants){
   if(!part) return false;
-  if(lookup.has(part)) return true;
+  const inputTokens = part.split(' ').filter(Boolean);
+  if(!inputTokens.length) return false;
 
-  // Akzeptiert mehrere Bedeutungen auch ohne Satzzeichen und in anderer Reihenfolge.
-  if(part.includes(' ')){
-    const tokens = part.split(' ').filter(Boolean);
-    if(tokens.length > 1 && tokens.every(tok => fuzzyTokenInLookup(tok, lookup))) return true;
-  }
+  // Wichtig: Mehrwort-Bedeutungen gelten nur als richtig, wenn alle Wörter vorhanden sind.
+  return variants.some(variant => {
+    if(part === variant) return true;
 
-  // Akzeptiert kleine Tippfehler wie "erluben" statt "erlauben".
-  if(fuzzyTokenInLookup(part, lookup)) return true;
+    const expectedTokens = variant.split(' ').filter(Boolean);
+    if(expectedTokens.length !== inputTokens.length) return false;
 
-  return Array.from(lookup).some(v => v.split(' ').includes(part) && part.length>3);
+    const remaining = [...expectedTokens];
+    for(const tok of inputTokens){
+      const idx = remaining.findIndex(exp => isFuzzyTokenMatch(tok, exp));
+      if(idx === -1) return false;
+      remaining.splice(idx, 1);
+    }
+    return remaining.length === 0;
+  });
 }
 
 // Normalisierung für Stammformen (ignoriert Makrons und gängige Satzzeichen)
@@ -204,10 +192,10 @@ function qCheck(){
   const w=qWords[qIdx];
   const raw=document.getElementById('q-input').value;
   if(!raw.trim()) return;
-  const lookup = buildMeaningLookup(w.de || []);
+  const variants = buildMeaningVariants(w.de || []);
   const parts = meaningInputParts(raw);
   const uniqueParts = [...new Set(parts)];
-  const isOk = uniqueParts.length>0 && uniqueParts.every(p => isMeaningMatch(p, lookup));
+  const isOk = uniqueParts.length>0 && uniqueParts.every(p => isMeaningMatch(p, variants));
   qAnswered=true;
   document.getElementById('q-input').disabled=true;
   if(isOk){ qRight++; } else { qWrong++; }
