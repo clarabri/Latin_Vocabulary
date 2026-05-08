@@ -74,6 +74,18 @@ p { margin-bottom: 1rem; }
 
 .menu-group { margin-bottom: 0.9rem; }
 
+.course-menu {
+  margin-bottom: 0.9rem;
+}
+
+.course-menu > summary {
+  list-style: none;
+}
+
+.course-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
 .menu-btn {
   width: 100%;
   border-radius: 12px;
@@ -102,6 +114,7 @@ p { margin-bottom: 1rem; }
 }
 
 .menu-btn-main.expanded::after { transform: rotate(180deg); }
+.course-menu[open] .menu-btn-main::after { transform: rotate(180deg); }
 
 .menu-btn-main:hover {
   border-color: var(--gold);
@@ -109,17 +122,13 @@ p { margin-bottom: 1rem; }
 }
 
 .submenu {
-  display: none;
+  display: block;
   margin-top: 0.5rem;
   padding: 0.55rem;
   border-radius: 12px;
   border: 1px solid var(--border);
   background: #f9f4eb;
 }
-
-.submenu[hidden] { display: none !important; }
-
-.submenu.open { display: block; }
 
 .menu-btn-sub {
   padding: 0.7rem 0.9rem;

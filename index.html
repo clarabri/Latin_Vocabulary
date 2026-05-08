@@ -13,25 +13,21 @@
     <p class="start-kicker">Latein Vokabeltrainer</p>
     <h1>Wähle deinen Kurs</h1>
 
-    <div class="menu-group">
-      <button type="button" class="menu-btn menu-btn-main" data-menu-toggle="course-9c" aria-expanded="false" id="btn-course-9c">
-        Latein-9c
-      </button>
-      <div class="submenu" id="course-9c" hidden>
-        <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 41">Lektion 41</button>
-        <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 42">Lektion 42</button>
-        <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 43">Lektion 43</button>
+    <details class="course-menu" id="course-9c-wrap">
+      <summary class="menu-btn menu-btn-main menu-summary" id="btn-course-9c">Latein-9c</summary>
+      <div class="submenu" id="course-9c">
+        <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 41" onclick="openLessonFromMenu('Latein-9c','Lektion 41')">Lektion 41</button>
+        <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 42" onclick="openLessonFromMenu('Latein-9c','Lektion 42')">Lektion 42</button>
+        <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 43" onclick="openLessonFromMenu('Latein-9c','Lektion 43')">Lektion 43</button>
       </div>
-    </div>
+    </details>
 
-    <div class="menu-group">
-      <button type="button" class="menu-btn menu-btn-main" data-menu-toggle="course-8c" aria-expanded="false" id="btn-course-8c">
-        Latein-8c
-      </button>
-      <div class="submenu" id="course-8c" hidden>
+    <details class="course-menu" id="course-8c-wrap">
+      <summary class="menu-btn menu-btn-main menu-summary" id="btn-course-8c">Latein-8c</summary>
+      <div class="submenu" id="course-8c">
         <p class="submenu-empty">Inhalte folgen bald.</p>
       </div>
-    </div>
+    </details>
   </div>
 </section>
 
