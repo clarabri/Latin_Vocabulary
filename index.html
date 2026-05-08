@@ -31,5 +31,10 @@
     </div>
   </section>
 
+  <script>
+    function openLessonFromMenu(course, lesson) {
+      window.location.href = `./lessons/quiz.html?course=${encodeURIComponent(course)}&lesson=${encodeURIComponent(lesson)}`;
+    }
+  </script>
 </body>
 </html>
