@@ -18,7 +18,6 @@ const lessons = {
 };
 let currentLessonKey = Object.keys(lessons)[0];
 let lessonData = JSON.parse(JSON.stringify(lessons[currentLessonKey]));
-let appInitialized = false;
 
 const lessonRouteMap = {
   'Latein-9c': {
@@ -104,11 +103,9 @@ function enterLessonApp(course, lesson){
   if(editorBtn) editorBtn.style.display = 'inline-block';
   if(topbarSub) topbarSub.textContent = `Vokabelabfrage · ${lesson}`;
 
-  if(!appInitialized){
-    initLesson();
-    showTab('vquiz-de');
-    appInitialized = true;
-  }
+  // Always initialize/reinitialize the lesson
+  initLesson();
+  showTab('vquiz-de');
 }
 
 // Sicherstellen, dass Inline-Handler in allen Browser-Kontexten funktionieren.
@@ -1168,11 +1165,19 @@ function initLesson(){
   if(typeof trRender === 'function') trRender();
 }
 
-// initialize
+// initialize on page load
 if(document.getElementById('start-screen')){
   const appShell = document.getElementById('app-shell');
   const editorBtn = document.getElementById('data-editor-toggle');
   if(appShell) appShell.style.display = 'none';
   if(editorBtn) editorBtn.style.display = 'none';
   bindStartMenuEvents();
+
+  // load lesson from URL parameters if present
+  const params = new URLSearchParams(window.location.search);
+  const course = params.get('course');
+  const lesson = params.get('lesson');
+  if(course && lesson) {
+    openLessonFromMenu(course, lesson);
+  }
 }
