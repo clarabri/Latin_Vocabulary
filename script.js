@@ -1,10 +1,17 @@
 // live lesson data (editable via editor panel)
 // lessons registry: add new lessons here by copying the structure of defaultLessonData
 const lessons = {
-  'Lektion 40/3': JSON.parse(JSON.stringify(defaultLessonData))
+  'Lektion 41': JSON.parse(JSON.stringify(defaultLessonData))
 };
 let currentLessonKey = Object.keys(lessons)[0];
 let lessonData = JSON.parse(JSON.stringify(lessons[currentLessonKey]));
+let appInitialized = false;
+
+const lessonRouteMap = {
+  'Latein-9c': {
+    'Lektion 41': 'Lektion 41'
+  }
+};
 
 // basic array shuffle
 function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
@@ -19,6 +26,55 @@ function showTab(id) {
     const btn = document.getElementById('t-'+t);
     if(btn) btn.classList.toggle('active', t===id);
   });
+}
+
+function toggleCourseMenu(menuId){
+  const target = document.getElementById(menuId);
+  if(!target) return;
+
+  const allMenus = document.querySelectorAll('.submenu');
+  allMenus.forEach(menu => {
+    const isTarget = menu.id === menuId;
+    menu.classList.toggle('open', isTarget && !menu.classList.contains('open'));
+  });
+
+  const allMainButtons = document.querySelectorAll('.menu-btn-main');
+  allMainButtons.forEach(btn => {
+    const controls9c = btn.getAttribute('id') === 'btn-course-9c' && menuId === 'course-9c';
+    const controls8c = btn.getAttribute('id') === 'btn-course-8c' && menuId === 'course-8c';
+    const expanded = (controls9c || controls8c) && target.classList.contains('open');
+    btn.classList.toggle('expanded', expanded);
+    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  });
+}
+
+function openLessonFromMenu(course, lesson){
+  const route = lessonRouteMap[course] && lessonRouteMap[course][lesson];
+  if(!route){
+    alert(`${lesson} ist noch nicht verfugbar.`);
+    return;
+  }
+
+  currentLessonKey = route;
+  enterLessonApp(course, lesson);
+}
+
+function enterLessonApp(course, lesson){
+  const startScreen = document.getElementById('start-screen');
+  const appShell = document.getElementById('app-shell');
+  const editorBtn = document.getElementById('data-editor-toggle');
+  const topbarSub = document.querySelector('.topbar-sub');
+
+  if(startScreen) startScreen.style.display = 'none';
+  if(appShell) appShell.style.display = 'flex';
+  if(editorBtn) editorBtn.style.display = 'inline-block';
+  if(topbarSub) topbarSub.textContent = `Vokabelabfrage · ${lesson}`;
+
+  if(!appInitialized){
+    initLesson();
+    showTab('vquiz-de');
+    appInitialized = true;
+  }
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1074,6 +1130,9 @@ function initLesson(){
 }
 
 // initialize
-initLesson();
-// ensure tabs visible / default to first quiz (Deutsch)
-if(typeof showTab === 'function') showTab('vquiz-de');
+if(document.getElementById('start-screen')){
+  const appShell = document.getElementById('app-shell');
+  const editorBtn = document.getElementById('data-editor-toggle');
+  if(appShell) appShell.style.display = 'none';
+  if(editorBtn) editorBtn.style.display = 'none';
+}
