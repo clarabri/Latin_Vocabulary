@@ -54,6 +54,9 @@
     <button class="tabbtn" onclick="showTab('vquiz-stf')" id="t-vquiz-stf">
       <span class="tabnum">II</span> Stammformen
     </button>
+    <button class="tabbtn" onclick="showTab('flashcards')" id="t-flashcards">
+      <span class="tabnum">III</span> Karteikarten
+    </button>
   </div>
 
   <!-- PANELS -->
@@ -272,7 +275,23 @@
         </div>
       </div>
     </div>
-  </div><!-- /shell -->
+
+    <!-- ═══ PANEL III: FLASHCARDS ═══ -->
+    <div class="panel" id="panel-flashcards">
+      <div style="padding:20px;">
+        <div style="margin-bottom:20px;">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button class="btn btn-ghost" onclick="flashcardsShuffleNew()">Neu mischen</button>
+            <span id="fc-counter" style="color:var(--ink2);">—</span>
+          </div>
+        </div>
+        
+        <div id="flashcards-container" style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center; align-items:flex-start;">
+          <!-- Karteikarten werden hier eingefügt -->
+        </div>
+      </div>
+    </div>
+  </div><!-- /panels --><!-- /shell -->
 
 <!-- load external lesson data (defines `defaultLessonData`) -->
 <script src="../lesson-data-8c.js"></script>
@@ -334,6 +353,135 @@
       }
     }, 100);
   });
+
+  // ═══ FLASHCARDS ═══
+  let flashcardsData = [];
+
+  function flashcardsShuffleNew() {
+    if (!window.vocabData || window.vocabData.length === 0) {
+      console.log('vocabData nicht verfügbar');
+      return;
+    }
+    flashcardsData = JSON.parse(JSON.stringify(window.vocabData));
+    // Shuffle
+    for (let i = flashcardsData.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [flashcardsData[i], flashcardsData[j]] = [flashcardsData[j], flashcardsData[i]];
+    }
+    renderFlashcards();
+  }
+
+  function renderFlashcards() {
+    const container = document.getElementById('flashcards-container');
+    if (!container) return;
+
+    if (flashcardsData.length === 0) {
+      if (!window.vocabData || window.vocabData.length === 0) {
+        container.innerHTML = '<p style="color:var(--ink2);">Keine Vokabeln verfügbar</p>';
+        return;
+      }
+      flashcardsShuffleNew();
+      return;
+    }
+
+    container.innerHTML = '';
+    const counter = document.getElementById('fc-counter');
+    if (counter) counter.textContent = `${flashcardsData.length} Karteikarten`;
+
+    flashcardsData.forEach((item, idx) => {
+      const card = document.createElement('div');
+      card.className = 'flashcard';
+      card.style.cssText = `
+        width: 280px;
+        height: 180px;
+        perspective: 1000px;
+        cursor: pointer;
+        flex-shrink: 0;
+      `;
+
+      const inner = document.createElement('div');
+      inner.className = 'flashcard-inner';
+      inner.style.cssText = `
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+      `;
+      inner.dataset.flipped = 'false';
+
+      // Front
+      const front = document.createElement('div');
+      front.className = 'flashcard-front';
+      front.style.cssText = `
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: var(--surface);
+        border: 2px solid var(--border2);
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        backface-visibility: hidden;
+        text-align: center;
+      `;
+      front.innerHTML = `
+        <div style="font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:600; color:var(--ink);">
+          ${item.la || '—'}
+        </div>
+      `;
+
+      // Back
+      const back = document.createElement('div');
+      back.className = 'flashcard-back';
+      back.style.cssText = `
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--gold2) 0%, var(--gold) 100%);
+        border: 2px solid var(--gold);
+        border-radius: var(--radius);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-shadow: var(--shadow2);
+        backface-visibility: hidden;
+        transform: rotateY(180deg);
+        text-align: center;
+        color: var(--ink);
+      `;
+      back.innerHTML = `
+        <div style="font-size:0.85rem; margin-bottom:12px; font-weight:600; color:var(--ink2);">Stammformen:</div>
+        <div style="font-size:0.95rem; font-family:'DM Mono',monospace; margin-bottom:12px; line-height:1.4;">
+          ${item.stf || '—'}
+        </div>
+        <div style="font-size:0.85rem; margin-top:8px; border-top:1px solid rgba(28,21,16,0.3); padding-top:8px;">
+          ${Array.isArray(item.de) ? item.de.join(', ') : (item.de || '—')}
+        </div>
+      `;
+
+      inner.appendChild(front);
+      inner.appendChild(back);
+      card.appendChild(inner);
+
+      card.addEventListener('click', function() {
+        const isFlipped = inner.dataset.flipped === 'true';
+        inner.style.transform = isFlipped ? 'rotateY(0deg)' : 'rotateY(180deg)';
+        inner.dataset.flipped = isFlipped ? 'false' : 'true';
+      });
+
+      container.appendChild(card);
+    });
+  }
+
+  // Render flashcards when tab is opened
+  window.renderFlashcards = renderFlashcards;
+  window.flashcardsShuffleNew = flashcardsShuffleNew;
 </script>
 </body>
 </html>

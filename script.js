@@ -35,12 +35,16 @@ function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=
 // TAB SWITCHING
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function showTab(id) {
-  ['vocab-overview','vquiz-de','vquiz-stf'].forEach(t => {
+  ['vocab-overview','vquiz-de','vquiz-stf','flashcards'].forEach(t => {
     const panel = document.getElementById('panel-'+t);
     if(panel) panel.classList.toggle('active', t===id);
     const btn = document.getElementById('t-'+t);
     if(btn) btn.classList.toggle('active', t===id);
   });
+  // Spezial-Handler für Flashcards
+  if(id === 'flashcards' && typeof renderFlashcards === 'function') {
+    renderFlashcards();
+  }
 }
 
 function toggleCourseMenu(menuId){
