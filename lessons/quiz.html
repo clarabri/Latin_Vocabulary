@@ -26,6 +26,7 @@
       <summary class="menu-btn menu-btn-main menu-summary" id="btn-course-8c">Latein-8c</summary>
       <div class="submenu" id="course-8c">
         <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-8c" data-lesson="Stammformen bekannter Vokabeln" onclick="openLessonFromMenu('Latein-8c','Stammformen bekannter Vokabeln')">Stammformen bekannter Vokabeln</button>
+        <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-8c" data-lesson="Lektion 18" onclick="openLessonFromMenu('Latein-8c','Lektion 18')">Lektion 18</button>
       </div>
     </details>
   </div>
@@ -296,7 +297,11 @@
   window.openLessonFromMenu = function(course, lesson) {
     let quizFile = 'quiz.html';
     if(course === 'Latein-8c') {
-      quizFile = 'quiz-8c.html';
+      if(lesson === 'Lektion 18') {
+        quizFile = 'quiz-8c-L18.html';
+      } else {
+        quizFile = 'quiz-8c.html';
+      }
     }
     window.location.href = `./${quizFile}?course=${encodeURIComponent(course)}&lesson=${encodeURIComponent(lesson)}`;
   };
@@ -420,12 +425,16 @@
       text-align: center;
     `;
     back.innerHTML = `
-      <div style="font-size: 0.85rem; color: var(--ink2); margin-bottom: 10px;">${item.wt || 'V'}</div>
-      <div style="font-size: 0.9rem; font-weight: 500; margin-bottom: 10px; color: var(--ink);">
+      <div style="font-size: 0.85rem; color: var(--ink2); margin-bottom: 10px;">Stammformen/Zusatzangaben:</div>
+      <div style="font-size: 0.9rem; font-family:'DM Mono',monospace; margin-bottom: 10px; color: var(--ink);">
+        ${item.stf || '—'}
+      </div>
+      ${item.zusatz ? `<div style="font-size:0.85rem; color:var(--ink2); margin-bottom:10px; font-style:italic;">${item.zusatz}</div>` : ''}
+      <div style="font-size: 0.9rem; margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px;">
         ${Array.isArray(item.de) ? item.de.join(', ') : (item.de || '—')}
       </div>
-      <div style="font-size: 0.75rem; color: var(--ink2); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px; margin-top: 10px; width: 100%;">
-        ${item.stf || '—'}
+      <div style="font-size: 0.75rem; color: var(--ink2); margin-top: 10px; font-style:italic;">
+        Wortart: ${item.wt || '?'}
       </div>
     `;
 

@@ -26,6 +26,7 @@
         <summary class="menu-btn menu-btn-main menu-summary" id="btn-course-8c">Latein-8c</summary>
         <div class="submenu" id="course-8c">
           <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-8c" data-lesson="Stammformen bekannter Vokabeln" onclick="openLessonFromMenu('Latein-8c','Stammformen bekannter Vokabeln')">Stammformen bekannter Vokabeln</button>
+          <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-8c" data-lesson="Lektion 18" onclick="openLessonFromMenu('Latein-8c','Lektion 18')">Lektion 18</button>
         </div>
       </details>
     </div>
@@ -35,7 +36,11 @@
     function openLessonFromMenu(course, lesson) {
       let quizFile = 'quiz.html';
       if(course === 'Latein-8c') {
-        quizFile = 'quiz-8c.html';
+        if(lesson === 'Lektion 18') {
+          quizFile = 'quiz-8c-L18.html';
+        } else {
+          quizFile = 'quiz-8c.html';
+        }
       }
       window.location.href = `./lessons/${quizFile}?course=${encodeURIComponent(course)}&lesson=${encodeURIComponent(lesson)}`;
     }
