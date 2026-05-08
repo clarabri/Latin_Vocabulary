@@ -117,6 +117,8 @@ p { margin-bottom: 1rem; }
   background: #f9f4eb;
 }
 
+.submenu[hidden] { display: none !important; }
+
 .submenu.open { display: block; }
 
 .menu-btn-sub {

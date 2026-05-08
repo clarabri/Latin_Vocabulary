@@ -1,7 +1,20 @@
 // live lesson data (editable via editor panel)
 // lessons registry: add new lessons here by copying the structure of defaultLessonData
+const safeDefaultLessonData = (typeof defaultLessonData !== 'undefined' && defaultLessonData)
+  ? defaultLessonData
+  : {
+      vocabData: [],
+      trChips: [],
+      sentenceBlanks: [],
+      fullLatinSentences: [],
+      blankLatin: {},
+      deLatMapping: [],
+      contextMap: [],
+      latinSegments: []
+    };
+
 const lessons = {
-  'Lektion 41': JSON.parse(JSON.stringify(defaultLessonData))
+  'Lektion 41': JSON.parse(JSON.stringify(safeDefaultLessonData))
 };
 let currentLessonKey = Object.keys(lessons)[0];
 let lessonData = JSON.parse(JSON.stringify(lessons[currentLessonKey]));
@@ -35,7 +48,9 @@ function toggleCourseMenu(menuId){
   const allMenus = document.querySelectorAll('.submenu');
   allMenus.forEach(menu => {
     const isTarget = menu.id === menuId;
-    menu.classList.toggle('open', isTarget && !menu.classList.contains('open'));
+    const willOpen = isTarget && !menu.classList.contains('open');
+    menu.classList.toggle('open', willOpen);
+    menu.hidden = !willOpen;
   });
 
   const allMainButtons = document.querySelectorAll('.menu-btn-main');
@@ -45,6 +60,25 @@ function toggleCourseMenu(menuId){
     const expanded = (controls9c || controls8c) && target.classList.contains('open');
     btn.classList.toggle('expanded', expanded);
     btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  });
+}
+
+function bindStartMenuEvents(){
+  const menuToggles = document.querySelectorAll('[data-menu-toggle]');
+  menuToggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const menuId = btn.getAttribute('data-menu-toggle');
+      if(menuId) toggleCourseMenu(menuId);
+    });
+  });
+
+  const lessonButtons = document.querySelectorAll('[data-course][data-lesson]');
+  lessonButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const course = btn.getAttribute('data-course');
+      const lesson = btn.getAttribute('data-lesson');
+      if(course && lesson) openLessonFromMenu(course, lesson);
+    });
   });
 }
 
@@ -80,6 +114,7 @@ function enterLessonApp(course, lesson){
 // Sicherstellen, dass Inline-Handler in allen Browser-Kontexten funktionieren.
 window.toggleCourseMenu = toggleCourseMenu;
 window.openLessonFromMenu = openLessonFromMenu;
+window.bindStartMenuEvents = bindStartMenuEvents;
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // VOCAB QUIZ
@@ -1139,4 +1174,5 @@ if(document.getElementById('start-screen')){
   const editorBtn = document.getElementById('data-editor-toggle');
   if(appShell) appShell.style.display = 'none';
   if(editorBtn) editorBtn.style.display = 'none';
+  bindStartMenuEvents();
 }
