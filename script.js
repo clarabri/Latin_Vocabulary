@@ -42,8 +42,9 @@ function showTab(id) {
     if(btn) btn.classList.toggle('active', t===id);
   });
   // Spezial-Handler für Flashcards
-  if(id === 'flashcards' && typeof renderFlashcards === 'function') {
-    renderFlashcards();
+  if(id === 'flashcards' && typeof window.renderFlashcards === 'function') {
+    console.log('[showTab] renderFlashcards wird aufgerufen');
+    window.renderFlashcards();
   }
 }
 
@@ -1148,6 +1149,7 @@ function initLesson(){
   // copy into globals used by the UI
   vocabData = lessonData.vocabData || [];
   window.vocabData = vocabData;
+  console.log('[initLesson] window.vocabData geladen mit', vocabData.length, 'Vokabeln');
   trChips = lessonData.trChips || [];
   sentenceBlanks = lessonData.sentenceBlanks || [];
   fullLatinSentences = lessonData.fullLatinSentences || [];

@@ -53,6 +53,9 @@
     <button class="tabbtn" onclick="showTab('vquiz-stf')" id="t-vquiz-stf">
       <span class="tabnum">II</span> Stammformen
     </button>
+    <button class="tabbtn" onclick="showTab('flashcards')" id="t-flashcards">
+      <span class="tabnum">III</span> Karteikarten
+    </button>
   </div>
 
   <!-- PANELS -->
@@ -263,6 +266,22 @@
       </div>
       </div>
     </div>
+
+    <!-- ═══ PANEL 3: FLASHCARDS ═══ -->
+    <div class="panel" id="panel-flashcards">
+      <div class="flashcards-wrap" style="display: flex; flex-direction: column; align-items: center; padding: 40px 20px; height: 100%; position: relative;">
+        <div style="margin-bottom: 20px; text-align: center;">
+          <div style="font-size: 0.9rem; color: var(--ink2); margin-bottom: 8px;">Karteikarten</div>
+          <div id="fc-counter" style="font-size: 1.2rem; font-weight: 600; color: var(--ink);">—</div>
+        </div>
+        <div id="flashcards-container" style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 280px; width: 100%;">
+          <!-- Flashcards werden hier eingefügt -->
+        </div>
+        <div style="margin-top: 20px; width: 100%; text-align: center;">
+          <button class="btn btn-ghost" onclick="flashcardsShuffleNew()">Neu mischen</button>
+        </div>
+      </div>
+    </div>
 </div><!-- /shell -->
 
 
@@ -281,6 +300,162 @@
     }
     window.location.href = `./${quizFile}?course=${encodeURIComponent(course)}&lesson=${encodeURIComponent(lesson)}`;
   };
+
+  // ═══ FLASHCARDS ═══
+  let flashcardsData = [];
+  let currentCardIndex = 0;
+
+  function flashcardsShuffleNew() {
+    console.log('flashcardsShuffleNew aufgerufen');
+    if (!window.vocabData || window.vocabData.length === 0) {
+      console.log('vocabData nicht verfügbar:', window.vocabData);
+      return;
+    }
+    console.log('Lade', window.vocabData.length, 'Vokabeln für Karteikarten');
+    flashcardsData = JSON.parse(JSON.stringify(window.vocabData));
+    // Shuffle
+    for (let i = flashcardsData.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [flashcardsData[i], flashcardsData[j]] = [flashcardsData[j], flashcardsData[i]];
+    }
+    currentCardIndex = 0;
+    console.log('Karteikarten gemischt, gestartet mit Index 0');
+    renderFlashcards();
+  }
+
+  function renderFlashcards() {
+    const container = document.getElementById('flashcards-container');
+    if (!container) {
+      console.log('flashcards-container nicht gefunden');
+      return;
+    }
+
+    // Wenn keine Karteikarten geladen sind, prüfe vocabData
+    if (flashcardsData.length === 0) {
+      if (!window.vocabData || window.vocabData.length === 0) {
+        console.log('vocabData nicht verfügbar oder leer');
+        container.innerHTML = '<p style="color:var(--ink2); text-align:center; padding:20px;">Keine Vokabeln verfügbar</p>';
+        return;
+      }
+      console.log('Laden der Karteikarten mit', window.vocabData.length, 'Vokabeln');
+      flashcardsShuffleNew();
+      return;
+    }
+
+    container.innerHTML = '';
+    const counter = document.getElementById('fc-counter');
+    if (counter) counter.textContent = `${currentCardIndex + 1} / ${flashcardsData.length}`;
+
+    // Nur die aktuelle Karte anzeigen
+    const item = flashcardsData[currentCardIndex];
+    if (!item) {
+      console.log('Item nicht gefunden bei Index', currentCardIndex);
+      return;
+    }
+    
+    const card = document.createElement('div');
+    card.className = 'flashcard';
+    card.style.cssText = `
+      width: 320px;
+      height: 220px;
+      perspective: 1000px;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin: 0 auto;
+    `;
+
+    const inner = document.createElement('div');
+    inner.className = 'flashcard-inner';
+    inner.style.cssText = `
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    `;
+    inner.dataset.flipped = 'false';
+
+    // Front
+    const front = document.createElement('div');
+    front.className = 'flashcard-front';
+    front.style.cssText = `
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: var(--surface);
+      border: 2px solid var(--border2);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-shadow: var(--shadow2);
+      backface-visibility: hidden;
+      text-align: center;
+    `;
+    front.innerHTML = `
+      <div style="font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:600; color:var(--ink);">
+        ${item.la}
+      </div>
+    `;
+
+    // Back
+    const back = document.createElement('div');
+    back.className = 'flashcard-back';
+    back.style.cssText = `
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: var(--gold);
+      border: 2px solid var(--border2);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-shadow: var(--shadow2);
+      backface-visibility: hidden;
+      transform: rotateY(180deg);
+      text-align: center;
+    `;
+    back.innerHTML = `
+      <div style="font-size: 0.85rem; color: var(--ink2); margin-bottom: 10px;">${item.wt || 'V'}</div>
+      <div style="font-size: 0.9rem; font-weight: 500; margin-bottom: 10px; color: var(--ink);">
+        ${Array.isArray(item.de) ? item.de.join(', ') : (item.de || '—')}
+      </div>
+      <div style="font-size: 0.75rem; color: var(--ink2); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px; margin-top: 10px; width: 100%;">
+        ${item.stf || '—'}
+      </div>
+    `;
+
+    inner.appendChild(front);
+    inner.appendChild(back);
+    card.appendChild(inner);
+
+    card.addEventListener('click', function() {
+      const isFlipped = inner.dataset.flipped === 'true';
+      
+      if (isFlipped) {
+        // Wenn die Karte umgedreht ist, zur nächsten Karte
+        currentCardIndex++;
+        if (currentCardIndex >= flashcardsData.length) {
+          currentCardIndex = 0; // Zurück zur ersten Karte
+        }
+        renderFlashcards();
+      } else {
+        // Karte umdrehen
+        inner.style.transform = 'rotateY(180deg)';
+        inner.dataset.flipped = 'true';
+      }
+    });
+
+    container.appendChild(card);
+  }
+
+  // Render flashcards when tab is opened
+  window.renderFlashcards = renderFlashcards;
+  window.flashcardsShuffleNew = flashcardsShuffleNew;
 </script>
 </body>
 </html>

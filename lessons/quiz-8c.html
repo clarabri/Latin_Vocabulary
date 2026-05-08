@@ -359,10 +359,12 @@
   let currentCardIndex = 0;
 
   function flashcardsShuffleNew() {
+    console.log('flashcardsShuffleNew aufgerufen');
     if (!window.vocabData || window.vocabData.length === 0) {
-      console.log('vocabData nicht verfügbar');
+      console.log('vocabData nicht verfügbar:', window.vocabData);
       return;
     }
+    console.log('Lade', window.vocabData.length, 'Vokabeln für Karteikarten');
     flashcardsData = JSON.parse(JSON.stringify(window.vocabData));
     // Shuffle
     for (let i = flashcardsData.length - 1; i > 0; i--) {
@@ -370,18 +372,25 @@
       [flashcardsData[i], flashcardsData[j]] = [flashcardsData[j], flashcardsData[i]];
     }
     currentCardIndex = 0;
+    console.log('Karteikarten gemischt, gestartet mit Index 0');
     renderFlashcards();
   }
 
   function renderFlashcards() {
     const container = document.getElementById('flashcards-container');
-    if (!container) return;
+    if (!container) {
+      console.log('flashcards-container nicht gefunden');
+      return;
+    }
 
+    // Wenn keine Karteikarten geladen sind, prüfe vocabData
     if (flashcardsData.length === 0) {
       if (!window.vocabData || window.vocabData.length === 0) {
-        container.innerHTML = '<p style="color:var(--ink2);">Keine Vokabeln verfügbar</p>';
+        console.log('vocabData nicht verfügbar oder leer');
+        container.innerHTML = '<p style="color:var(--ink2); text-align:center; padding:20px;">Keine Vokabeln verfügbar</p>';
         return;
       }
+      console.log('Laden der Karteikarten mit', window.vocabData.length, 'Vokabeln');
       flashcardsShuffleNew();
       return;
     }
@@ -392,6 +401,10 @@
 
     // Nur die aktuelle Karte anzeigen
     const item = flashcardsData[currentCardIndex];
+    if (!item) {
+      console.log('Item nicht gefunden bei Index', currentCardIndex);
+      return;
+    }
     
     const card = document.createElement('div');
     card.className = 'flashcard';
