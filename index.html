@@ -25,7 +25,7 @@
       <details class="course-menu" id="course-8c-wrap">
         <summary class="menu-btn menu-btn-main menu-summary" id="btn-course-8c">Latein-8c</summary>
         <div class="submenu" id="course-8c">
-          <p class="submenu-empty">Inhalte folgen bald. Test</p>
+          <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-8c" data-lesson="Grundwortschatz" onclick="openLessonFromMenu('Latein-8c','Grundwortschatz')">Grundwortschatz</button>
         </div>
       </details>
     </div>
@@ -33,7 +33,11 @@
 
   <script>
     function openLessonFromMenu(course, lesson) {
-      window.location.href = `./lessons/quiz.html?course=${encodeURIComponent(course)}&lesson=${encodeURIComponent(lesson)}`;
+      let quizFile = 'quiz.html';
+      if(course === 'Latein-8c') {
+        quizFile = 'quiz-8c.html';
+      }
+      window.location.href = `./lessons/${quizFile}?course=${encodeURIComponent(course)}&lesson=${encodeURIComponent(lesson)}`;
     }
   </script>
 </body>

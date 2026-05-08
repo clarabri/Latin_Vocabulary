@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Latein · Vokabelabfrage · Lektion 41</title>
+<title>Latein · Vokabelabfrage · Latein 8c</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../style.css">
 </head>
@@ -38,12 +38,29 @@
     <div class="topbar-title">
       <span class="dot"></span>
       Latein
-      <span class="topbar-sub">Vokabelabfrage · Lektion 41</span>
+      <span class="topbar-sub">Vokabelabfrage · Latein 8c</span>
     </div>
     <button class="btn btn-red" id="back-btn" onclick="location.href='../index.html'" style="margin-left:12px;">← zurück</button>
   </div>
 
-
+  <!-- OVERVIEW -->
+  <div id="vocab-overview" style="padding:20px; background:var(--surface2); margin-bottom:20px; border-radius:var(--radius);">
+    <h2 style="margin-bottom:16px; font-family:'Playfair Display',serif; font-size:1.3rem;">Vokabelübersicht</h2>
+    <div id="overview-table-wrap" style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.95rem;">
+        <thead>
+          <tr style="background:var(--bg); border-bottom:2px solid var(--border2);">
+            <th style="padding:10px; text-align:left; font-weight:600;">Lateinisch</th>
+            <th style="padding:10px; text-align:left; font-weight:600;">Stammformen</th>
+            <th style="padding:10px; text-align:left; font-weight:600;">Bedeutung</th>
+          </tr>
+        </thead>
+        <tbody id="overview-body">
+          <!-- wird mit JavaScript gefüllt -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <!-- TAB NAV -->
   <div class="tabnav" style="position:relative; z-index:20;">
@@ -73,7 +90,7 @@
 
           <div class="progress-row">
             <div class="progress-meta">
-              <span id="q-prog-lbl">Frage 1 / 22</span>
+              <span id="q-prog-lbl">Frage 1 / 29</span>
               <span id="q-prog-pct">0 %</span>
             </div>
             <div class="progress-track">
@@ -109,13 +126,6 @@
             </div>
           </div>
         </div>
-        
-        <!-- Context box: erscheint nach Beantwortung einer Vokabel -->
-        <aside id="q-context" class="q-context" style="display:none;">
-          <div class="eyebrow"><span class="q-icon" id="q-context-icon">T</span>Kontext</div>
-          <div id="q-context-latin" style="font-family: 'Playfair Display', serif; font-size:1.05rem; margin-top:8px; white-space:pre-wrap;"></div>
-          <div id="q-context-de" style="margin-top:10px; color:var(--ink2);"></div>
-        </aside>
 
         <!-- Done screen -->
         <div class="done-screen" id="q-done">
@@ -175,7 +185,7 @@
 
             <div class="progress-row">
               <div class="progress-meta">
-                <span id="q-prog-lbl-stf">Frage 1 / 22</span>
+                <span id="q-prog-lbl-stf">Frage 1 / 29</span>
                 <span id="q-prog-pct-stf">0 %</span>
               </div>
               <div class="progress-track">
@@ -185,91 +195,81 @@
 
             <div class="quiz-card">
               <div class="qcard-word" id="qword-stf">—</div>
-            <div class="qcard-type" id="qtype-stf">—</div>
+              <div class="qcard-type" id="qtype-stf">—</div>
 
-            <div class="hint-row">
-              <button class="hint-btn" onclick="qShowHintStf()">Hinweis</button>
-              <span class="hint-val" id="q-hint-val-stf"></span>
+              <div class="hint-row">
+                <button class="hint-btn" onclick="qShowHintStf()">Hinweis</button>
+                <span class="hint-val" id="q-hint-val-stf"></span>
+              </div>
+
+              <input class="answer-input" id="q-input-stf" type="text"
+                placeholder="Stammformen eingeben…"
+                onkeydown="if(event.key==='Enter') qCheckStf()">
+
+              <div class="feedback" id="q-feedback-stf">
+                <div class="fb-title" id="q-fb-title-stf"></div>
+                <div class="fb-detail" id="q-fb-detail-stf"></div>
+                <div class="fb-meaning" id="q-fb-meaning-stf" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border);"></div>
+                <div class="fb-stf" id="q-fb-stf-stf"></div>
+              </div>
+
+              <div class="btn-row" id="q-btns-check-stf">
+                <button class="btn btn-red" onclick="qCheckStf()">Prüfen</button>
+                <button class="btn btn-ghost" onclick="qSkipStf()">Überspringen</button>
+              </div>
+              <div class="btn-row" id="q-btns-next-stf" style="display:none">
+                <button class="btn btn-green" onclick="qNextStf()">Weiter →</button>
+              </div>
             </div>
+          </div>
 
-            <input class="answer-input" id="q-input-stf" type="text"
-              placeholder="Stammformen eingeben…"
-              onkeydown="if(event.key==='Enter') qCheckStf()">
-
-            <div class="feedback" id="q-feedback-stf">
-              <div class="fb-title" id="q-fb-title-stf"></div>
-              <div class="fb-detail" id="q-fb-detail-stf"></div>
-              <div class="fb-meaning" id="q-fb-meaning-stf" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border);"></div>
-              <div class="fb-stf" id="q-fb-stf-stf"></div>
+          <!-- Done screen -->
+          <div class="done-screen" id="q-done-stf">
+            <div class="done-big" id="done-score-stf">—</div>
+            <div class="done-sub" id="done-msg-stf"></div>
+            <div class="stat-grid">
+              <div class="stat-block sb-right">
+                <div class="stat-num" id="ds-right-stf">0</div>
+                <div class="stat-lbl">Richtig</div>
+              </div>
+              <div class="stat-block sb-wrong">
+                <div class="stat-num" id="ds-wrong-stf">0</div>
+                <div class="stat-lbl">Falsch</div>
+              </div>
+              <div class="stat-block sb-skip">
+                <div class="stat-num" id="ds-skip-stf">0</div>
+                <div class="stat-lbl">Übersprungen</div>
+              </div>
             </div>
-
-            <div class="btn-row" id="q-btns-check-stf">
-              <button class="btn btn-red" onclick="qCheckStf()">Prüfen</button>
-              <button class="btn btn-ghost" onclick="qSkipStf()">Überspringen</button>
+            <div class="done-review">
+              <div class="done-review-title">Dein Durchlauf</div>
+              <div class="done-review-table-wrap">
+                <table class="done-review-table">
+                  <thead>
+                    <tr>
+                      <th>Vokabel</th>
+                      <th>Stammformen</th>
+                      <th>Bedeutung</th>
+                      <th>Gewusst?</th>
+                    </tr>
+                  </thead>
+                  <tbody id="q-review-body-stf"></tbody>
+                </table>
+              </div>
+              <div id="q-review-empty-stf" class="done-review-empty">Noch keine Ergebnisse vorhanden.</div>
             </div>
-            <div class="btn-row" id="q-btns-next-stf" style="display:none">
-              <button class="btn btn-green" onclick="qNextStf()">Weiter →</button>
+            <div class="btn-row done-actions">
+              <button class="btn btn-ghost" onclick="qDownloadAllReviewPdfStf()">Übersicht als PDF runterladen</button>
+              <button class="btn btn-red" onclick="qRestartStf()">Nochmal üben</button>
             </div>
           </div>
         </div>
-        
-        <!-- Context box: erscheint nach Beantwortung einer Vokabel -->
-        <aside id="q-context-stf" class="q-context" style="display:none;">
-          <div class="eyebrow"><span class="q-icon" id="q-context-icon-stf">T</span>Kontext</div>
-          <div id="q-context-latin-stf" style="font-family: 'Playfair Display', serif; font-size:1.05rem; margin-top:8px; white-space:pre-wrap;"></div>
-          <div id="q-context-de-stf" style="margin-top:10px; color:var(--ink2);"></div>
-        </aside>
-
-        <!-- Done screen -->
-        <div class="done-screen" id="q-done-stf">
-          <div class="done-big" id="done-score-stf">—</div>
-          <div class="done-sub" id="done-msg-stf"></div>
-          <div class="stat-grid">
-            <div class="stat-block sb-right">
-              <div class="stat-num" id="ds-right-stf">0</div>
-              <div class="stat-lbl">Richtig</div>
-            </div>
-            <div class="stat-block sb-wrong">
-              <div class="stat-num" id="ds-wrong-stf">0</div>
-              <div class="stat-lbl">Falsch</div>
-            </div>
-            <div class="stat-block sb-skip">
-              <div class="stat-num" id="ds-skip-stf">0</div>
-              <div class="stat-lbl">Übersprungen</div>
-            </div>
-          </div>
-          <div class="done-review">
-            <div class="done-review-title">Dein Durchlauf</div>
-            <div class="done-review-table-wrap">
-              <table class="done-review-table">
-                <thead>
-                  <tr>
-                    <th>Vokabel</th>
-                    <th>Stammformen</th>
-                    <th>Bedeutung</th>
-                    <th>Gewusst?</th>
-                  </tr>
-                </thead>
-                <tbody id="q-review-body-stf"></tbody>
-              </table>
-            </div>
-            <div id="q-review-empty-stf" class="done-review-empty">Noch keine Ergebnisse vorhanden.</div>
-          </div>
-          <div class="btn-row done-actions">
-            <button class="btn btn-ghost" onclick="qDownloadAllReviewPdfStf()">Übersicht als PDF runterladen</button>
-            <button class="btn btn-red" onclick="qRestartStf()">Nochmal üben</button>
-          </div>
-        </div>
-      </div>
       </div>
     </div>
-</div><!-- /shell -->
-
-
-<button id="data-editor-toggle" onclick="openDataEditor()" style="position:fixed;right:18px;bottom:18px;background:var(--gold2);border:none;padding:10px 12px;border-radius:10px;box-shadow:var(--shadow);z-index:9999;cursor:pointer;display:none;">Daten bearbeiten</button>
+  </div><!-- /shell -->
 
 <!-- load external lesson data (defines `defaultLessonData`) -->
-<script src="../lesson-data.js"></script>
+<script src="../lesson-data-8c.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="../script.js"></script>
 <script>
@@ -280,6 +280,30 @@
       quizFile = 'quiz-8c.html';
     }
     window.location.href = `./${quizFile}?course=${encodeURIComponent(course)}&lesson=${encodeURIComponent(lesson)}`;
+  };
+
+  // Render overview table when app initializes
+  function renderVocabOverview() {
+    const body = document.getElementById('overview-body');
+    if (!body || !vocabData) return;
+    body.innerHTML = '';
+    vocabData.forEach(item => {
+      const row = document.createElement('tr');
+      row.style.borderBottom = '1px solid var(--border)';
+      row.innerHTML = `
+        <td style="padding:10px; font-family:'Playfair Display',serif; font-weight:500;">${item.latin}</td>
+        <td style="padding:10px; color:var(--ink2); font-size:0.9rem;">${item.stammformen}</td>
+        <td style="padding:10px;">${item.bedeutung}</td>
+      `;
+      body.appendChild(row);
+    });
+  }
+  
+  // Hook into initLesson to render overview
+  const originalInitLesson = window.initLesson;
+  window.initLesson = function() {
+    originalInitLesson.call(this);
+    renderVocabOverview();
   };
 </script>
 </body>
