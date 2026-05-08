@@ -43,27 +43,11 @@
     <button class="btn btn-red" id="back-btn" onclick="location.href='../index.html'" style="margin-left:12px;">← zurück</button>
   </div>
 
-  <!-- OVERVIEW -->
-  <div id="vocab-overview" style="padding:20px; background:var(--surface2); margin-bottom:20px; border-radius:var(--radius);">
-    <h2 style="margin-bottom:16px; font-family:'Playfair Display',serif; font-size:1.3rem;">Vokabelübersicht</h2>
-    <div id="overview-table-wrap" style="overflow-x:auto;">
-      <table style="width:100%; border-collapse:collapse; font-size:0.95rem;">
-        <thead>
-          <tr style="background:var(--bg); border-bottom:2px solid var(--border2);">
-            <th style="padding:10px; text-align:left; font-weight:600;">Lateinisch</th>
-            <th style="padding:10px; text-align:left; font-weight:600;">Stammformen</th>
-            <th style="padding:10px; text-align:left; font-weight:600;">Bedeutung</th>
-          </tr>
-        </thead>
-        <tbody id="overview-body">
-          <!-- wird mit JavaScript gefüllt -->
-        </tbody>
-      </table>
-    </div>
-  </div>
-
   <!-- TAB NAV -->
   <div class="tabnav" style="position:relative; z-index:20;">
+    <button class="tabbtn" onclick="showTab('vocab-overview')" id="t-vocab-overview">
+      <span class="tabnum">0</span> Übersicht
+    </button>
     <button class="tabbtn active" onclick="showTab('vquiz-de')" id="t-vquiz-de">
       <span class="tabnum">I</span> Deutsch
     </button>
@@ -74,6 +58,28 @@
 
   <!-- PANELS -->
   <div class="panels">
+
+    <!-- ═══ PANEL 0: VOKABELÜBERSICHT ═══ -->
+    <div class="panel" id="panel-vocab-overview">
+      <div id="vocab-overview-content">
+        <div style="padding:20px;">
+          <div id="overview-table-wrap" style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:0.95rem;">
+              <thead>
+                <tr style="background:var(--bg); border-bottom:2px solid var(--border2);">
+                  <th style="padding:10px; text-align:left; font-weight:600;">Lateinisch</th>
+                  <th style="padding:10px; text-align:left; font-weight:600;">Stammformen</th>
+                  <th style="padding:10px; text-align:left; font-weight:600;">Bedeutung</th>
+                </tr>
+              </thead>
+              <tbody id="overview-body">
+                <!-- wird mit JavaScript gefüllt -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- ═══ PANEL 1: VOCAB QUIZ - DEUTSCH ═══ -->
     <div class="panel active" id="panel-vquiz-de">

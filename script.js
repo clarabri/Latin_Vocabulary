@@ -35,7 +35,7 @@ function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=
 // TAB SWITCHING
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function showTab(id) {
-  ['vquiz-de','vquiz-stf'].forEach(t => {
+  ['vocab-overview','vquiz-de','vquiz-stf'].forEach(t => {
     const panel = document.getElementById('panel-'+t);
     if(panel) panel.classList.toggle('active', t===id);
     const btn = document.getElementById('t-'+t);
