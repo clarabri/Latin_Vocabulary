@@ -291,26 +291,49 @@
   // Render overview table when app initializes
   function renderVocabOverview() {
     const body = document.getElementById('overview-body');
-    if (!body || !vocabData) return;
+    if (!body) {
+      console.log('overview-body nicht gefunden');
+      return;
+    }
+    if (!window.vocabData || window.vocabData.length === 0) {
+      console.log('vocabData ist leer oder nicht definiert', window.vocabData);
+      return;
+    }
     body.innerHTML = '';
-    vocabData.forEach(item => {
+    window.vocabData.forEach(item => {
       const row = document.createElement('tr');
       row.style.borderBottom = '1px solid var(--border)';
       row.innerHTML = `
-        <td style="padding:10px; font-family:'Playfair Display',serif; font-weight:500;">${item.la}</td>
-        <td style="padding:10px; color:var(--ink2); font-size:0.9rem;">${item.stf}</td>
-        <td style="padding:10px;">${Array.isArray(item.de) ? item.de.join(', ') : item.de}</td>
+        <td style="padding:10px; font-family:'Playfair Display',serif; font-weight:500;">${item.la || '—'}</td>
+        <td style="padding:10px; color:var(--ink2); font-size:0.9rem;">${item.stf || '—'}</td>
+        <td style="padding:10px;">${Array.isArray(item.de) ? item.de.join(', ') : (item.de || '—')}</td>
       `;
       body.appendChild(row);
     });
+    console.log('Übersicht gerendert mit', window.vocabData.length, 'Vokabeln');
   }
   
   // Hook into initLesson to render overview
   const originalInitLesson = window.initLesson;
   window.initLesson = function() {
+    console.log('initLesson aufgerufen');
     originalInitLesson.call(this);
-    renderVocabOverview();
+    // Warte kurz, damit vocabData gesetzt ist
+    setTimeout(() => {
+      console.log('renderVocabOverview wird aufgerufen nach initLesson');
+      renderVocabOverview();
+    }, 50);
   };
+  
+  // Auch beim initialen Laden aufrufen, falls URL-Parameter vorhanden sind
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      if (window.vocabData && window.vocabData.length > 0) {
+        console.log('DOMContentLoaded: renderVocabOverview wird aufgerufen');
+        renderVocabOverview();
+      }
+    }, 100);
+  });
 </script>
 </body>
 </html>
