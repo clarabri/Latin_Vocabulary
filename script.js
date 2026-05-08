@@ -51,7 +51,7 @@ function toggleCourseMenu(menuId){
 function openLessonFromMenu(course, lesson){
   const route = lessonRouteMap[course] && lessonRouteMap[course][lesson];
   if(!route){
-    alert(`${lesson} ist noch nicht verfugbar.`);
+    alert(`${lesson} ist noch nicht verfuegbar.`);
     return;
   }
 
@@ -76,6 +76,10 @@ function enterLessonApp(course, lesson){
     appInitialized = true;
   }
 }
+
+// Sicherstellen, dass Inline-Handler in allen Browser-Kontexten funktionieren.
+window.toggleCourseMenu = toggleCourseMenu;
+window.openLessonFromMenu = openLessonFromMenu;
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // VOCAB QUIZ
