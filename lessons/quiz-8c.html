@@ -291,9 +291,9 @@
       const row = document.createElement('tr');
       row.style.borderBottom = '1px solid var(--border)';
       row.innerHTML = `
-        <td style="padding:10px; font-family:'Playfair Display',serif; font-weight:500;">${item.latin}</td>
-        <td style="padding:10px; color:var(--ink2); font-size:0.9rem;">${item.stammformen}</td>
-        <td style="padding:10px;">${item.bedeutung}</td>
+        <td style="padding:10px; font-family:'Playfair Display',serif; font-weight:500;">${item.la}</td>
+        <td style="padding:10px; color:var(--ink2); font-size:0.9rem;">${item.stf}</td>
+        <td style="padding:10px;">${Array.isArray(item.de) ? item.de.join(', ') : item.de}</td>
       `;
       body.appendChild(row);
     });
