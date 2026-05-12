@@ -624,3 +624,70 @@ details.level[open] summary::after { transform: rotate(90deg); }
 
 .exercise .controls { margin-top: 0.8rem; display:flex; gap:8px; align-items:center; }
 .exercise .result { margin-left: 8px; font-family: 'DM Mono', monospace; color: var(--ink3); }
+
+/* ── STREAK PILL ── */
+.sp-streak { background: #fff3e0; color: #e65100; }
+@keyframes streak-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.38); }
+  100% { transform: scale(1); }
+}
+.streak-pop { animation: streak-pop 0.28s ease-out; }
+
+/* ── COMBO FLASH ── */
+#combo-flash {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 700;
+  color: var(--gold2);
+  text-shadow: 0 2px 24px rgba(196,154,42,0.5), 0 0 50px rgba(232,197,90,0.25);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+@keyframes comboFlash {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+  18%  { opacity: 1; transform: translate(-50%, -50%) scale(1.12); }
+  60%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.88); }
+}
+.combo-flash-anim { animation: comboFlash 1.4s ease-out forwards; }
+
+/* ── DONE STARS ── */
+.done-stars { margin: 0.9rem 0 0.3rem; }
+.done-stars-row { display: flex; gap: 14px; justify-content: center; }
+.done-star {
+  font-size: 2.8rem;
+  display: inline-block;
+  opacity: 0;
+  transform: scale(0);
+}
+.done-star.star-off {
+  opacity: 0.18;
+  filter: grayscale(1);
+  transform: scale(1);
+}
+@keyframes starReveal {
+  0%   { opacity: 0; transform: scale(0) rotate(-30deg); }
+  55%  { opacity: 1; transform: scale(1.35) rotate(12deg); }
+  75%  { transform: scale(0.92) rotate(-4deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.done-star.star-on { animation: starReveal 0.55s ease-out forwards; }
+.done-star.star-delay-0 { animation-delay: 0.15s; }
+.done-star.star-delay-1 { animation-delay: 0.5s; }
+.done-star.star-delay-2 { animation-delay: 0.85s; }
+.done-best-streak {
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink2);
+  margin-top: 8px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.02em;
+}

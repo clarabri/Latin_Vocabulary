@@ -127,6 +127,7 @@ window.bindStartMenuEvents = bindStartMenuEvents;
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 let qWords=[], qIdx=0, qRight=0, qWrong=0, qSkipped=0, qAnswered=false;
 let qReviewRows=[];
+let qStreak=0, qBestStreak=0;
 
 function shuffle2(arr){ return shuffle(arr); }
 
@@ -134,6 +135,8 @@ function qStart(){
   qWords = shuffle2(vocabData);
   qIdx=0; qRight=0; qWrong=0; qSkipped=0; qAnswered=false;
   qReviewRows=[];
+  qStreak=0; qBestStreak=0;
+  const sp=document.getElementById('qsp-streak'); if(sp) sp.remove();
   const done = document.getElementById('q-done'); if(done) done.classList.remove('show');
   const qm = document.getElementById('quiz-main'); if(qm) qm.style.display='';
   qLoad();
@@ -176,6 +179,13 @@ function buildMeaningVariants(meanings){
     meaningInputParts(m).forEach(part => {
       if(part) variants.add(part);
     });
+    // Parenthetical content like "(über)" is optional — also accept the answer without it
+    if(m.includes('(')){
+      const stripped = m.replace(/\s*\([^)]*\)/g, '').trim();
+      meaningInputParts(stripped).forEach(part => {
+        if(part) variants.add(part);
+      });
+    }
   });
   return Array.from(variants);
 }
@@ -217,13 +227,11 @@ function isMeaningMatch(part, variants){
   const inputTokens = part.split(' ').filter(Boolean);
   if(!inputTokens.length) return false;
 
-  // Wichtig: Mehrwort-Bedeutungen gelten nur als richtig, wenn alle Wörter vorhanden sind.
-  return variants.some(variant => {
+  // Primary: part matches exactly one variant (respects multi-word like "nicht wollen")
+  const standardMatch = variants.some(variant => {
     if(part === variant) return true;
-
     const expectedTokens = variant.split(' ').filter(Boolean);
     if(expectedTokens.length !== inputTokens.length) return false;
-
     const remaining = [...expectedTokens];
     for(const tok of inputTokens){
       const idx = remaining.findIndex(exp => isFuzzyTokenMatch(tok, exp));
@@ -232,6 +240,27 @@ function isMeaningMatch(part, variants){
     }
     return remaining.length === 0;
   });
+  if(standardMatch) return true;
+
+  // Fallback: user typed synonyms space-separated instead of comma-separated
+  // (e.g. "Eid Schwur" instead of "Eid, Schwur").
+  // Each token must match a distinct *single-word* variant so that
+  // "wollen" never accidentally matches "nicht wollen".
+  if(inputTokens.length > 1){
+    const singleWordVariants = variants.filter(v => !v.includes(' '));
+    if(singleWordVariants.length >= inputTokens.length){
+      const pool = [...singleWordVariants];
+      const allMatch = inputTokens.every(tok => {
+        const idx = pool.findIndex(v => tok === v || isFuzzyTokenMatch(tok, v));
+        if(idx === -1) return false;
+        pool.splice(idx, 1);
+        return true;
+      });
+      if(allMatch) return true;
+    }
+  }
+
+  return false;
 }
 
 // Normalisierung für Stammformen (ignoriert Makrons und gängige Satzzeichen)
@@ -299,7 +328,9 @@ function qCheck(){
   const isOk = uniqueParts.length>0 && uniqueParts.every(p => isMeaningMatch(p, variants));
   qAnswered=true;
   document.getElementById('q-input').disabled=true;
-  if(isOk){ qRight++; } else { qWrong++; }
+  if(isOk){ qRight++; qStreak++; if(qStreak>qBestStreak) qBestStreak=qStreak; } else { qWrong++; qStreak=0; }
+  qUpdateStreak();
+  if(isOk && (qStreak===3||qStreak===5||qStreak===10)) showComboFlash(qStreak);
   qReviewRows.push({
     la: w.la,
     de: (w.de || []).join(', '),
@@ -321,6 +352,7 @@ function qSkip(){
   qSkipped++;
   const w=qWords[qIdx];
   qAnswered=true;
+  qStreak=0; qUpdateStreak();
   document.getElementById('q-input').disabled=true;
   qReviewRows.push({
     la: w.la,
@@ -595,6 +627,8 @@ function qDone(){
   const dsSkip = document.getElementById('ds-skip'); if(dsSkip) dsSkip.textContent=qSkipped;
   ensureQReviewUI();
   renderQReviewTable();
+  showDoneStars('q', pct, qBestStreak);
+  if(pct>=80) launchConfetti();
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -804,11 +838,14 @@ function trReset(){
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 let qWordsStf=[], qIdxStf=0, qRightStf=0, qWrongStf=0, qSkippedStf=0, qAnsweredStf=false;
 let qReviewRowsStf=[];
+let qStreakStf=0, qBestStreakStf=0;
 
 function qStartStf(){
   qWordsStf = shuffle2(vocabData.filter(v => v.stf && v.stf !== '—'));
   qIdxStf=0; qRightStf=0; qWrongStf=0; qSkippedStf=0; qAnsweredStf=false;
   qReviewRowsStf=[];
+  qStreakStf=0; qBestStreakStf=0;
+  const spStf=document.getElementById('qsp-streak-stf'); if(spStf) spStf.remove();
   const done = document.getElementById('q-done-stf'); if(done) done.classList.remove('show');
   const qm = document.getElementById('quiz-main-stf'); if(qm) qm.style.display='';
   qLoadStf();
@@ -843,7 +880,9 @@ function qCheckStf(){
   const isOk=isStfMatch(raw, w.stf);
   qAnsweredStf=true;
   document.getElementById('q-input-stf').disabled=true;
-  if(isOk){ qRightStf++; } else { qWrongStf++; }
+  if(isOk){ qRightStf++; qStreakStf++; if(qStreakStf>qBestStreakStf) qBestStreakStf=qStreakStf; } else { qWrongStf++; qStreakStf=0; }
+  qUpdateStreakStf();
+  if(isOk && (qStreakStf===3||qStreakStf===5||qStreakStf===10)) showComboFlash(qStreakStf);
   qReviewRowsStf.push({
     la: w.la,
     stf: w.stf,
@@ -871,6 +910,7 @@ function qSkipStf(){
   qSkippedStf++;
   const w=qWordsStf[qIdxStf];
   qAnsweredStf=true;
+  qStreakStf=0; qUpdateStreakStf();
   document.getElementById('q-input-stf').disabled=true;
   qReviewRowsStf.push({
     la: w.la,
@@ -1141,6 +1181,102 @@ function qDoneStf(){
   const dsSkip = document.getElementById('ds-skip-stf'); if(dsSkip) dsSkip.textContent=qSkippedStf;
   ensureQReviewUIStf();
   renderQReviewTableStf();
+  showDoneStars('stf', pct, qBestStreakStf);
+  if(pct>=80) launchConfetti();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// STREAK / COMBO / STARS / CONFETTI
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function qUpdateStreak(){
+  const pills = document.querySelector('#quiz-main .stat-pills');
+  if(!pills) return;
+  let pill = document.getElementById('qsp-streak');
+  if(qStreak >= 2){
+    if(!pill){ pill=document.createElement('span'); pill.id='qsp-streak'; pill.className='stat-pill sp-streak'; pills.appendChild(pill); }
+    pill.textContent='🔥 '+qStreak;
+    pill.classList.remove('streak-pop'); void pill.offsetWidth; pill.classList.add('streak-pop');
+  } else if(pill){ pill.remove(); }
+}
+
+function qUpdateStreakStf(){
+  const pills = document.querySelector('#quiz-main-stf .stat-pills');
+  if(!pills) return;
+  let pill = document.getElementById('qsp-streak-stf');
+  if(qStreakStf >= 2){
+    if(!pill){ pill=document.createElement('span'); pill.id='qsp-streak-stf'; pill.className='stat-pill sp-streak'; pills.appendChild(pill); }
+    pill.textContent='🔥 '+qStreakStf;
+    pill.classList.remove('streak-pop'); void pill.offsetWidth; pill.classList.add('streak-pop');
+  } else if(pill){ pill.remove(); }
+}
+
+function showComboFlash(streak){
+  const msgs={3:'🔥 Combo ×3!',5:'⚡ Combo ×5 – Stark!',10:'🌟 ×10 – Perfekt!'};
+  const msg=msgs[streak]; if(!msg) return;
+  let el=document.getElementById('combo-flash');
+  if(!el){ el=document.createElement('div'); el.id='combo-flash'; document.body.appendChild(el); }
+  el.textContent=msg;
+  el.classList.remove('combo-flash-anim'); void el.offsetWidth; el.classList.add('combo-flash-anim');
+}
+
+function showDoneStars(prefix, pct, bestStreak){
+  const doneId=prefix==='q'?'q-done':'q-done-stf';
+  const done=document.getElementById(doneId); if(!done) return;
+  const stars=pct>=95?3:pct>=80?2:pct>=60?1:0;
+  let starsEl=done.querySelector('.done-stars');
+  if(!starsEl){
+    starsEl=document.createElement('div'); starsEl.className='done-stars';
+    const doneSub=done.querySelector('.done-sub');
+    if(doneSub) doneSub.insertAdjacentElement('afterend',starsEl);
+    else done.insertBefore(starsEl,done.firstChild);
+  }
+  let html='<div class="done-stars-row">';
+  for(let i=0;i<3;i++){
+    html+=`<span class="done-star ${i<stars?'star-on star-delay-'+i:'star-off'}">⭐</span>`;
+  }
+  html+='</div>';
+  if(bestStreak>=3) html+=`<div class="done-best-streak">Beste Serie: 🔥 ${bestStreak} in Folge</div>`;
+  starsEl.innerHTML=html;
+}
+
+function launchConfetti(){
+  const existing=document.getElementById('confetti-canvas'); if(existing) existing.remove();
+  const canvas=document.createElement('canvas');
+  canvas.id='confetti-canvas';
+  canvas.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;';
+  document.body.appendChild(canvas);
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  const colors=['#9b2a1a','#c49a2a','#e8c55a','#2a6640','#1e3f6e','#c24130','#3d8f58'];
+  const pieces=Array.from({length:130},()=>({
+    x:Math.random()*canvas.width, y:-20-Math.random()*220,
+    w:7+Math.random()*9, h:5+Math.random()*5,
+    color:colors[Math.floor(Math.random()*colors.length)],
+    vx:(Math.random()-0.5)*4, vy:1.5+Math.random()*3,
+    rot:Math.random()*Math.PI*2, rotV:(Math.random()-0.5)*0.15,
+    circle:Math.random()>0.55
+  }));
+  let start=null;
+  const duration=4500;
+  function draw(ts){
+    if(!start) start=ts;
+    const elapsed=ts-start;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let alive=false;
+    const fade=elapsed>duration-1200?Math.max(0,1-(elapsed-(duration-1200))/1200):1;
+    pieces.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.06; p.rot+=p.rotV;
+      if(p.y<canvas.height+30) alive=true;
+      ctx.globalAlpha=fade; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.color;
+      if(p.circle){ ctx.beginPath(); ctx.arc(0,0,p.w/2,0,Math.PI*2); ctx.fill(); }
+      else { ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); }
+      ctx.restore();
+    });
+    ctx.globalAlpha=1;
+    if(alive && elapsed<duration+500){ requestAnimationFrame(draw); } else { canvas.remove(); }
+  }
+  requestAnimationFrame(draw);
 }
 
 // initialize from lessonData (loads vocab, quiz and translation)
