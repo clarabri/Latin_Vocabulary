@@ -21,6 +21,8 @@ let lessonData = JSON.parse(JSON.stringify(lessons[currentLessonKey]));
 
 const lessonRouteMap = {
   'Latein-9c': {
+    'Lektion 15': 'Lektion 41',
+    'Lektion 40': 'Lektion 41',
     'Lektion 41': 'Lektion 41'
   },
   'Latein-8c': {

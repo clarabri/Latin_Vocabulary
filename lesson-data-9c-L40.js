@@ -1,0 +1,32 @@
+// Lektion data für Latein-9c Lektion 40
+const defaultLessonData = {
+  vocabData: [
+    { la: 'ipse',           de: ['(er, sie, es) selbst'],                                     stf: 'ipsa, ipsum',                          zusatz: '',  wt: 'Pron' },
+    { la: 'insidiae',       de: ['Falle', 'Attentat', 'Hinterlist'],                          stf: 'insidiarum f Pl.',                      zusatz: '',  wt: 'N'    },
+    { la: 'animadvertere',  de: ['bemerken'],                                                  stf: 'animadverto, animadverti, animadversum', zusatz: '',  wt: 'V'    },
+    { la: 'opprimere',      de: ['bedrohen', 'niederwerfen', 'unterdrücken'],                  stf: 'opprimo, oppressi, oppressum',           zusatz: '',  wt: 'V'    },
+    { la: 'coniunx',        de: ['Gatte', 'Gattin'],                                           stf: 'coniugis m/f',                          zusatz: '',  wt: 'N'    },
+    { la: 'maximus',        de: ['der größte', 'sehr groß'],                                   stf: 'a, um',                                 zusatz: '',  wt: 'Adj'  },
+    { la: 'diligentia',     de: ['Sorgfalt', 'Umsicht'],                                       stf: '—',                                     zusatz: '',  wt: 'N'    },
+    { la: 'summus',         de: ['der oberste', 'der höchste', 'der letzte'],                  stf: 'a, um',                                 zusatz: '',  wt: 'Adj'  },
+    { la: 'inopia',         de: ['Mangel', 'Not'],                                             stf: '—',                                     zusatz: '',  wt: 'N'    },
+    { la: 'perspicere',     de: ['durchschauen', 'erkennen', 'genau betrachten', 'sehen'],     stf: 'perspicio, perspexi, perspectum',        zusatz: '',  wt: 'V'    },
+    { la: 'occupare',       de: ['besetzen', 'einnehmen'],                                     stf: 'occupo, occupavi, occupatum',            zusatz: '',  wt: 'V'    },
+    { la: 'canis',          de: ['Hund'],                                                      stf: 'canis m',                               zusatz: '',  wt: 'N'    },
+    { la: 'excitare',       de: ['erregen', 'ermuntern', 'wecken'],                            stf: 'excito, excitavi, excitatum',            zusatz: '',  wt: 'V'    },
+    { la: 'idem',           de: ['derselbe', 'der gleiche'],                                   stf: 'eadem, idem',                           zusatz: '',  wt: 'Pron' },
+    { la: 'exire',          de: ['herausgehen'],                                               stf: 'exeo, exii, exitum',                    zusatz: '',  wt: 'V'    },
+    { la: 'proximus',       de: ['der nächste'],                                               stf: 'a, um',                                 zusatz: '',  wt: 'Adj'  },
+    { la: 'gerere',         de: ['tragen', 'ausführen', 'führen'],                             stf: 'gero, gessi, gestum',                   zusatz: '',  wt: 'V'    },
+    { la: 'res gestae',     de: ['Taten'],                                                     stf: 'Pl.',                                   zusatz: '',  wt: 'N'    },
+    { la: 'Gallus',         de: ['Gallier'],                                                   stf: '—',                                     zusatz: '',  wt: 'N'    },
+    { la: 'Manlius',        de: ['(Marcus) Manlius (röm. Konsul 392 v. Chr.)'],                stf: '—',                                     zusatz: '',  wt: 'N'    },
+  ],
+  trChips: [],
+  sentenceBlanks: [],
+  fullLatinSentences: [],
+  blankLatin: {},
+  deLatMapping: [],
+  contextMap: [],
+  latinSegments: []
+};

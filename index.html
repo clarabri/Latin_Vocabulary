@@ -16,6 +16,8 @@
       <details class="course-menu" id="course-9c-wrap">
         <summary class="menu-btn menu-btn-main menu-summary" id="btn-course-9c">Latein-9c</summary>
         <div class="submenu" id="course-9c">
+          <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 15" onclick="openLessonFromMenu('Latein-9c','Lektion 15')">Lektion 15</button>
+          <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 40" onclick="openLessonFromMenu('Latein-9c','Lektion 40')">Lektion 40</button>
           <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 41" onclick="openLessonFromMenu('Latein-9c','Lektion 41')">Lektion 41</button>
           <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 42" onclick="openLessonFromMenu('Latein-9c','Lektion 42')">Lektion 42</button>
           <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 43" onclick="openLessonFromMenu('Latein-9c','Lektion 43')">Lektion 43</button>
@@ -41,6 +43,10 @@
         } else {
           quizFile = 'quiz-8c.html';
         }
+      } else if(course === 'Latein-9c' && lesson === 'Lektion 15') {
+        quizFile = 'quiz-9c-L15.html';
+      } else if(course === 'Latein-9c' && lesson === 'Lektion 40') {
+        quizFile = 'quiz-9c-L40.html';
       }
       window.location.href = `./lessons/${quizFile}?course=${encodeURIComponent(course)}&lesson=${encodeURIComponent(lesson)}`;
     }
