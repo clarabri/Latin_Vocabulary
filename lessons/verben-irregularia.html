@@ -211,6 +211,8 @@
 .vbtn-ghost:hover { border-color: var(--ink3); background: var(--surface2); color: var(--ink); }
 .vbtn-gold { background: var(--gold); border-color: var(--gold); color: #fff; }
 .vbtn-gold:hover { background: #b8962e; }
+.vbtn-red { background: var(--red); border-color: var(--red); color: #fff; }
+.vbtn-red:hover { background: var(--red2); }
 
 /* ── FEEDBACK ── */
 .verb-feedback {
@@ -434,7 +436,7 @@ function renderCountdownThenDrag(c) {
       <div class="timer-track"><div class="timer-fill" id="tfill"></div></div>
     </div>
     ${tableHTML(getRows())}`;
-  startTimer(10, () => renderDrag(c));
+  startTimer(10, () => renderDrag(c, true));
 }
 
 function renderCountdownThenInput(c) {
@@ -448,14 +450,14 @@ function renderCountdownThenInput(c) {
       <div class="timer-track"><div class="timer-fill" id="tfill"></div></div>
     </div>
     ${tableHTML(getRows())}`;
-  startTimer(10, () => renderInput(c));
+  startTimer(10, () => renderInput(c, true));
 }
 
 /* ── DRAG AND DROP ── */
 let draggedChip = null;
 let dropZoneData = {};
 
-function renderDrag(c) {
+function renderDrag(c, fromCountdown) {
   const rows = getRows();
   const correct = rows.map(r => r[1]);
   let pool = [...correct];
@@ -475,6 +477,7 @@ function renderDrag(c) {
       <td>${r[0]}</td>
       <td><div class="drop-zone" id="dz_${i}" data-index="${i}">—</div></td>
     </tr>`).join('');
+  const repeatBtn = fromCountdown ? `<button class="vbtn vbtn-red" onclick="renderCountdownThenDrag(document.getElementById('content'))"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.51"></path></svg> Nochmal anschauen</button>` : '';
 
   c.innerHTML = `
     <div class="task-box">
@@ -486,6 +489,7 @@ function renderDrag(c) {
     <div class="verb-actions">
       <button class="vbtn vbtn-primary" onclick="checkDrag()">Auswerten</button>
       <button class="vbtn vbtn-ghost" onclick="renderDrag(document.getElementById('content'))">Zurücksetzen</button>
+      ${repeatBtn}
     </div>
     <div id="feedbackBar"></div>`;
   setupDragEvents();
@@ -553,7 +557,7 @@ function checkDrag() {
 }
 
 /* ── INPUT MODE ── */
-function renderInput(c) {
+function renderInput(c, fromCountdown) {
   const rows = getRows();
   const inputRows = rows.map((r, i) => `
     <tr>
@@ -564,6 +568,7 @@ function renderInput(c) {
       </td>
       <td><span class="hint" id="hint_${i}"></span></td>
     </tr>`).join('');
+  const repeatBtn = fromCountdown ? `<button class="vbtn vbtn-red" onclick="renderCountdownThenInput(document.getElementById('content'))"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.51"></path></svg> Nochmal anschauen</button>` : '';
 
   c.innerHTML = `
     <div class="task-box">
@@ -574,6 +579,7 @@ function renderInput(c) {
     <div class="verb-actions">
       <button class="vbtn vbtn-primary" onclick="checkInput()">Auswerten</button>
       <button class="vbtn vbtn-ghost" onclick="renderInput(document.getElementById('content'))">Zurücksetzen</button>
+      ${repeatBtn}
     </div>
     <div id="feedbackBar"></div>`;
   document.getElementById('inp_0').focus();
