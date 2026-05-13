@@ -235,6 +235,15 @@
 }
 .vsection-hint { font-size: 0.85rem; color: var(--ink3); font-style: italic; }
 
+/* ── DONE STATES: TEMPUS + VERB TABS ── */
+.temp-btn.done { border-color: var(--green); color: var(--green); }
+.temp-btn.done.active { background: var(--green); border-color: var(--green); color: #fff; }
+.temp-btn.done .tbcheck { font-style: normal; }
+
+.verb-tab.done:not(.active) { color: var(--green); }
+.verb-tab.done .vtcheck { font-style: normal; color: var(--green); margin-right: 3px; }
+.verb-tab.done.active .vtcheck { color: var(--gold2); }
+
 /* ── WIN SCREEN ── */
 .win-screen { text-align: center; padding: 3rem 1rem; }
 .win-stars { font-size: 3rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
@@ -322,18 +331,26 @@ let timerInterval = null;
 let doneMap = {};
 
 function doneKey() { return verb + "_" + temp + "_" + stufe; }
+function isTempusDone(v, t) { return [1,2,3,4,5].every(s => doneMap[v + "_" + t + "_" + s]); }
+function isVerbDone(v)       { return TEMPORA.every(t => isTempusDone(v, t)); }
 
 /* ── BUILD UI ── */
 function buildTabs() {
-  document.getElementById('verbTabs').innerHTML = VERBS.map(v =>
-    `<button class="verb-tab${v === verb ? ' active' : ''}" onclick="setVerb('${v}')">${v}</button>`
-  ).join('');
+  document.getElementById('verbTabs').innerHTML = VERBS.map(v => {
+    const done = isVerbDone(v);
+    const active = v === verb;
+    const check = done ? `<span class="vtcheck">✓</span>` : '';
+    return `<button class="verb-tab${active ? ' active' : ''}${done ? ' done' : ''}" onclick="setVerb('${v}')">${check}${v}</button>`;
+  }).join('');
 }
 
 function buildTempora() {
-  document.getElementById('tempusRow').innerHTML = TEMPORA.map(t =>
-    `<button class="temp-btn${t === temp ? ' active' : ''}" onclick="setTemp('${t}')">${t}</button>`
-  ).join('');
+  document.getElementById('tempusRow').innerHTML = TEMPORA.map(t => {
+    const done = isTempusDone(verb, t);
+    const active = t === temp;
+    const check = done ? `<span class="tbcheck">✓ </span>` : '';
+    return `<button class="temp-btn${active ? ' active' : ''}${done ? ' done' : ''}" onclick="setTemp('${t}')">${check}${t}</button>`;
+  }).join('');
 }
 
 const STUFE_LABELS = ["Tabelle", "10s + D&D", "D&D blind", "10s + Eingabe", "Eingabe blind"];
@@ -568,6 +585,8 @@ function showFeedback(correct, total) {
 function markDone() {
   doneMap[doneKey()] = true;
   buildStufen();
+  buildTempora();
+  buildTabs();
   const allDone = [1,2,3,4,5].every(s => doneMap[verb + "_" + temp + "_" + s]);
   if (allDone) {
     setTimeout(() => { showWin(); startConfetti(); }, 600);
