@@ -235,6 +235,32 @@
 }
 .vsection-hint { font-size: 0.85rem; color: var(--ink3); font-style: italic; }
 
+/* ── TASK BOX ── */
+.task-box {
+  background: #fdf8ec;
+  border: 1px solid rgba(196,154,42,0.35);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 1.4rem;
+}
+.task-box .task-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.67rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  margin-bottom: 5px;
+}
+.task-box .task-text {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1rem;
+  color: var(--ink);
+  line-height: 1.55;
+  margin: 0;
+}
+.task-box .task-text strong { font-weight: 600; color: var(--ink); }
+
 /* ── DONE STATES: TEMPUS + VERB TABS ── */
 .temp-btn.done { border-color: var(--green); color: var(--green); }
 .temp-btn.done.active { background: var(--green); border-color: var(--green); color: #fff; }
@@ -384,8 +410,9 @@ function render() {
 /* ── STUFE 1: TABLE VIEW ── */
 function renderView(c) {
   c.innerHTML = `
-    <div class="vsection-header">
-      <span class="vsection-hint">Lerne die Formen auswendig</span>
+    <div class="task-box">
+      <div class="task-label">Stufe 1 — Formen kennenlernen</div>
+      <p class="task-text">Hier siehst du alle Formen von <strong>${verb}</strong> im <strong>${temp}</strong>. Lies sie aufmerksam durch und präge sie dir gut ein – dann geht es weiter zu Stufe 2.</p>
     </div>
     ${tableHTML(getRows())}
     <div class="verb-actions">
@@ -398,8 +425,12 @@ function renderView(c) {
 /* ── STUFE 2 / 4: COUNTDOWN ── */
 function renderCountdownThenDrag(c) {
   c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 2 — Einprägen & zuordnen</div>
+      <p class="task-text">Du hast <strong>10 Sekunden</strong>, um dir die Formen nochmals einzuprägen. Danach ziehst du die richtigen Formen per <strong>Drag & Drop</strong> in die passende Zeile.</p>
+    </div>
     <div class="timer-wrap">
-      <div class="timer-label"><span>Merke dir die Tabelle!</span><span id="tsec">10</span></div>
+      <div class="timer-label"><span>Noch Zeit zum Einprägen …</span><span id="tsec">10</span></div>
       <div class="timer-track"><div class="timer-fill" id="tfill"></div></div>
     </div>
     ${tableHTML(getRows())}`;
@@ -408,8 +439,12 @@ function renderCountdownThenDrag(c) {
 
 function renderCountdownThenInput(c) {
   c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 4 — Einprägen & eintippen</div>
+      <p class="task-text">Du hast <strong>10 Sekunden</strong>, um dir die Formen ein letztes Mal anzusehen. Danach tippst du alle Formen selbst in die Felder ein.</p>
+    </div>
     <div class="timer-wrap">
-      <div class="timer-label"><span>Merke dir die Tabelle!</span><span id="tsec">10</span></div>
+      <div class="timer-label"><span>Noch Zeit zum Einprägen …</span><span id="tsec">10</span></div>
       <div class="timer-track"><div class="timer-fill" id="tfill"></div></div>
     </div>
     ${tableHTML(getRows())}`;
@@ -442,8 +477,9 @@ function renderDrag(c) {
     </tr>`).join('');
 
   c.innerHTML = `
-    <div class="vsection-header">
-      <span class="vsection-hint">Ziehe die richtigen Formen in die Tabelle</span>
+    <div class="task-box">
+      <div class="task-label">Stufe 3 — Formen zuordnen (ohne Vorlage)</div>
+      <p class="task-text">Jetzt ohne Spickzettel: Ziehe jede Form per <strong>Drag & Drop</strong> in die richtige Zeile. Falsch platzierte Formen werden beim Auswerten markiert.</p>
     </div>
     <div class="drag-pool" id="dragPool">${chips}</div>
     <table class="drop-table"><tbody>${dropRows}</tbody></table>
@@ -530,8 +566,9 @@ function renderInput(c) {
     </tr>`).join('');
 
   c.innerHTML = `
-    <div class="vsection-header">
-      <span class="vsection-hint">Trage alle Formen ein</span>
+    <div class="task-box">
+      <div class="task-label">Stufe 5 — Formen eintippen (ohne Vorlage)</div>
+      <p class="task-text">Die letzte Prüfung – ganz ohne Hilfe: Tippe alle Formen aus dem Gedächtnis in die Felder. Mit <strong>Enter</strong> springst du zur nächsten Zeile.</p>
     </div>
     <table class="input-table"><tbody>${inputRows}</tbody></table>
     <div class="verb-actions">
