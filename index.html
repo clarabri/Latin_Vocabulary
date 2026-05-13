@@ -21,6 +21,7 @@
           <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 41" onclick="openLessonFromMenu('Latein-9c','Lektion 41')">Lektion 41</button>
           <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 42" onclick="openLessonFromMenu('Latein-9c','Lektion 42')">Lektion 42</button>
           <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="Lektion 43" onclick="openLessonFromMenu('Latein-9c','Lektion 43')">Lektion 43</button>
+          <button type="button" class="menu-btn menu-btn-sub" data-course="Latein-9c" data-lesson="velle, nolle, malle – Formenübung" onclick="openLessonFromMenu('Latein-9c','velle, nolle, malle – Formenübung')">velle, nolle, malle – Formenübung</button>
         </div>
       </details>
 
@@ -47,6 +48,8 @@
         quizFile = 'quiz-9c-L15.html';
       } else if(course === 'Latein-9c' && lesson === 'Lektion 40') {
         quizFile = 'quiz-9c-L40.html';
+      } else if(lesson === 'velle, nolle, malle – Formenübung') {
+        window.location.href = './lessons/verben-irregularia.html'; return;
       }
       window.location.href = `./lessons/${quizFile}?course=${encodeURIComponent(course)}&lesson=${encodeURIComponent(lesson)}`;
     }

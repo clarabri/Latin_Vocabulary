@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latein · Verba Irregularia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+/* ── VERB PAGE LAYOUT ── */
+.verb-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.verb-page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+.verb-page-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.verb-page-header h2 em { font-style: italic; color: var(--gold); }
+.verb-page-header p {
+  font-size: 0.9rem;
+  color: var(--ink3);
+  margin-top: 3px;
+  margin-bottom: 0;
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── VERB TABS ── */
+.verb-tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.2rem;
+  background: var(--surface2);
+}
+.verb-tab {
+  flex: 1; padding: 10px 0;
+  font-family: 'Source Serif 4', serif; font-size: 1.1rem; font-style: italic;
+  font-weight: 400;
+  background: none; border: none; cursor: pointer; color: var(--ink3);
+  transition: all 0.15s; letter-spacing: 0.02em;
+}
+.verb-tab:not(:last-child) { border-right: 1px solid var(--border2); }
+.verb-tab.active { background: var(--ink); color: var(--bg); }
+.verb-tab:hover:not(.active) { background: var(--border); color: var(--ink); }
+
+/* ── TEMPUS GRID ── */
+.tempus-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-bottom: 1.2rem;
+}
+.temp-btn {
+  padding: 7px 4px; font-family: 'DM Mono', monospace; font-size: 0.7rem;
+  background: none; border: 1px solid var(--border2);
+  border-radius: var(--radius); cursor: pointer; color: var(--ink2);
+  transition: all 0.15s; text-align: center; line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+.temp-btn.active {
+  background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 500;
+}
+.temp-btn:hover:not(.active) { background: var(--surface2); color: var(--ink); }
+
+/* ── STUFEN ── */
+.stufen-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-bottom: 1.8rem;
+}
+.stufe-btn {
+  padding: 10px 4px; font-family: 'DM Mono', monospace; font-size: 0.68rem;
+  background: none; border: 1px solid var(--border2);
+  border-radius: var(--radius); cursor: pointer; color: var(--ink3);
+  transition: all 0.15s; text-align: center; line-height: 1.4;
+  letter-spacing: 0.03em; text-transform: uppercase;
+}
+.stufe-btn .snum {
+  display: block; font-size: 1.3rem; font-family: 'Playfair Display', serif;
+  color: var(--ink2); margin-bottom: 3px; font-weight: 700;
+}
+.stufe-btn.active { border-color: var(--ink); background: var(--ink); color: #e8dcc8; }
+.stufe-btn.active .snum { color: var(--gold2); }
+.stufe-btn.done { border-color: var(--green); }
+.stufe-btn.done .snum { color: var(--green); }
+.stufe-btn:hover:not(.active) { border-color: var(--ink3); color: var(--ink2); }
+
+/* ── CONTENT AREA ── */
+.verb-content {
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  background: var(--surface);
+  min-height: 300px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+/* ── VERB TABLE ── */
+.verb-table { width: 100%; border-collapse: collapse; }
+.verb-table caption {
+  font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.15rem;
+  color: var(--ink2); margin-bottom: 10px; caption-side: top; text-align: left;
+}
+.verb-table th {
+  font-family: 'DM Mono', monospace; font-size: 0.67rem; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--ink3); padding: 6px 12px;
+  border-bottom: 1px solid var(--border); text-align: left; font-weight: 400;
+}
+.verb-table td {
+  padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 1.05rem;
+}
+.verb-table td:first-child {
+  color: var(--ink3); font-size: 0.82rem; font-family: 'DM Mono', monospace; width: 90px;
+}
+.verb-table td:last-child { font-weight: 600; letter-spacing: 0.01em; }
+.verb-table tr:last-child td { border-bottom: none; }
+
+/* ── TIMER ── */
+.timer-wrap { margin-bottom: 14px; }
+.timer-label {
+  font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--ink3);
+  margin-bottom: 6px; display: flex; justify-content: space-between;
+}
+.timer-track { height: 3px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+.timer-fill {
+  height: 100%; width: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold2));
+  border-radius: 99px; transition: width 0.1s linear;
+}
+
+/* ── DRAG AND DROP ── */
+.drag-pool {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+  min-height: 44px; padding: 10px;
+  border: 1.5px dashed var(--border2); border-radius: var(--radius);
+  background: var(--bg);
+}
+.drag-chip {
+  padding: 5px 14px; background: var(--surface); border: 1.5px solid var(--border2);
+  border-radius: 99px; cursor: grab; font-family: 'Source Serif 4', serif; font-size: 1rem;
+  font-weight: 600; color: var(--ink); user-select: none; transition: all 0.13s;
+}
+.drag-chip:hover { border-color: var(--gold); background: #fffdf5; }
+.drag-chip.dragging { opacity: 0.35; }
+.drag-chip.correct { background: #edf7ed; border-color: var(--green); color: var(--green); cursor: default; }
+.drag-chip.wrong { background: #fdf0ee; border-color: var(--red); color: var(--red); }
+
+.drop-table { width: 100%; border-collapse: collapse; }
+.drop-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.drop-table td:first-child {
+  font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--ink3); width: 90px;
+}
+.drop-zone {
+  min-width: 130px; min-height: 34px; border: 1.5px dashed var(--border2);
+  border-radius: var(--radius); padding: 4px 10px; display: inline-flex;
+  align-items: center; font-family: 'Source Serif 4', serif; font-size: 1rem;
+  font-weight: 600; transition: all 0.13s; color: var(--ink3);
+}
+.drop-zone.over { border-color: var(--gold); background: #fffdf5; }
+.drop-zone.filled { border-style: solid; border-color: var(--border2); color: var(--ink); }
+.drop-zone.correct { border-color: var(--green); background: #edf7ed; color: var(--green); }
+.drop-zone.wrong { border-color: var(--red); background: #fdf0ee; color: var(--red); }
+
+/* ── INPUT MODE ── */
+.input-table { width: 100%; border-collapse: collapse; }
+.input-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); }
+.input-table td:first-child {
+  font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--ink3); width: 90px;
+}
+.input-table input {
+  font-family: 'Source Serif 4', serif; font-size: 1rem; font-weight: 600;
+  border: 1.5px solid var(--border2); border-radius: 8px; padding: 6px 10px;
+  background: var(--surface2); color: var(--ink); width: 190px; outline: none;
+  transition: border-color 0.13s;
+}
+.input-table input:focus { border-color: var(--gold); background: var(--surface); }
+.input-table input.correct { border-color: var(--green); background: #edf7ed; color: var(--green); }
+.input-table input.wrong { border-color: var(--red); background: #fdf0ee; color: var(--red); }
+.input-table .hint {
+  font-size: 0.82rem; color: var(--red); margin-left: 8px; font-style: italic;
+  font-family: 'Source Serif 4', serif;
+}
+
+/* ── ACTIONS ── */
+.verb-actions { display: flex; gap: 8px; margin-top: 16px; align-items: center; flex-wrap: wrap; }
+.vbtn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0.6rem 1.2rem; border-radius: 8px;
+  font-family: 'Source Serif 4', serif; font-size: 14px;
+  cursor: pointer; border: 1.5px solid transparent; transition: all 0.13s;
+}
+.vbtn-primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.vbtn-primary:hover { background: #2e2820; }
+.vbtn-ghost { background: var(--surface); color: var(--ink2); border-color: var(--border2); }
+.vbtn-ghost:hover { border-color: var(--ink3); background: var(--surface2); color: var(--ink); }
+.vbtn-gold { background: var(--gold); border-color: var(--gold); color: #fff; }
+.vbtn-gold:hover { background: #b8962e; }
+
+/* ── FEEDBACK ── */
+.verb-feedback {
+  display: flex; align-items: center; gap: 10px; margin-top: 14px;
+  padding: 10px 14px; border-radius: var(--radius); font-size: 0.9rem;
+}
+.verb-feedback.ok { background: #edf7ed; border: 1px solid #aad4a7; color: var(--green); }
+.verb-feedback.err { background: #fdf0ee; border: 1px solid #f0b8ad; color: var(--red); }
+.verb-score {
+  font-family: 'DM Mono', monospace; font-size: 0.78rem; margin-left: auto;
+  padding: 3px 10px; border-radius: 99px; background: rgba(0,0,0,0.07);
+}
+
+/* ── SECTION HEADER ── */
+.vsection-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 14px;
+}
+.vsection-label {
+  font-family: 'DM Mono', monospace; font-size: 0.72rem;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink3);
+}
+.vsection-hint { font-size: 0.85rem; color: var(--ink3); font-style: italic; }
+
+/* ── WIN SCREEN ── */
+.win-screen { text-align: center; padding: 3rem 1rem; }
+.win-stars { font-size: 3rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
+.win-screen h2 {
+  font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700;
+  font-style: italic; color: var(--gold); margin-bottom: 0.4rem;
+}
+.win-screen p { color: var(--ink2); font-size: 1rem; margin-bottom: 1.5rem; }
+
+@media (max-width: 600px) {
+  .tempus-row { grid-template-columns: repeat(3, 1fr); }
+  .verb-page { padding: 1.2rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;"></canvas>
+
+<div class="shell" id="app-shell">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-title">
+      <span class="dot"></span>
+      Latein
+      <span class="topbar-sub">Verba Irregularia · Indikativ</span>
+    </div>
+    <button class="btn btn-red" onclick="location.href='../index.html'" style="margin-left:12px;padding:0.45rem 0.9rem;font-size:13px;">← zurück</button>
+  </div>
+
+  <!-- CONTENT SCROLL AREA -->
+  <div style="flex:1;overflow-y:auto;">
+    <div class="verb-page">
+      <div class="verb-page-header">
+        <h2>Verba <em>Irregularia</em></h2>
+        <p>velle · nolle · malle — Indikativ</p>
+      </div>
+
+      <div class="verb-tabs" id="verbTabs"></div>
+      <div class="tempus-row" id="tempusRow"></div>
+      <div class="stufen-row" id="stufenRow"></div>
+      <div class="verb-content" id="content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── DATA ── */
+const VERBS = ["velle", "nolle", "malle"];
+const TEMPORA = ["Präsens", "Imperfekt", "Futur I", "Perfekt", "Plusquamp.", "Futur II"];
+const PERSONS = ["1. Sg.", "2. Sg.", "3. Sg.", "1. Pl.", "2. Pl.", "3. Pl."];
+
+const FORMS = {
+  velle: {
+    "Präsens":    ["volo","vis","vult","volumus","vultis","volunt"],
+    "Imperfekt":  ["volebam","volebas","volebat","volebamus","volebatis","volebant"],
+    "Futur I":    ["volam","voles","volet","volemus","voletis","volent"],
+    "Perfekt":    ["volui","voluisti","voluit","voluimus","voluistis","voluerunt"],
+    "Plusquamp.": ["volueram","volueras","voluerat","volueramus","volueratis","voluerant"],
+    "Futur II":   ["voluero","volueris","voluerit","voluerimus","volueritis","voluerint"]
+  },
+  nolle: {
+    "Präsens":    ["nolo","non vis","non vult","nolumus","non vultis","nolunt"],
+    "Imperfekt":  ["nolebam","nolebas","nolebat","nolebamus","nolebatis","nolebant"],
+    "Futur I":    ["nolam","noles","nolet","nolemus","noletis","nolent"],
+    "Perfekt":    ["nolui","noluisti","noluit","noluimus","noluistis","noluerunt"],
+    "Plusquamp.": ["nolueram","nolueras","noluerat","nolueramus","nolueratis","noluerant"],
+    "Futur II":   ["noluero","nolueris","noluerit","noluerimus","nolueritis","noluerint"]
+  },
+  malle: {
+    "Präsens":    ["malo","mavis","mavult","malumus","mavultis","malunt"],
+    "Imperfekt":  ["malebam","malebas","malebat","malebamus","malebatis","malebant"],
+    "Futur I":    ["malam","males","malet","malemus","maletis","malent"],
+    "Perfekt":    ["malui","maluisti","maluit","maluimus","maluistis","maluerunt"],
+    "Plusquamp.": ["malueram","malueras","maluerat","malueramus","malueratis","maluerant"],
+    "Futur II":   ["maluero","malueris","maluerit","maluerimus","malueritis","maluerint"]
+  }
+};
+
+const FAKES = ["velle","nolle","malam","nolis","velit","malis","volam","nolueram",
+               "maluistis","volebas","mallet","vellet","nollet","voluerit","mavelim","nolite"];
+
+/* ── STATE ── */
+let verb = "velle", temp = "Präsens", stufe = 1;
+let timerInterval = null;
+let doneMap = {};
+
+function doneKey() { return verb + "_" + temp + "_" + stufe; }
+
+/* ── BUILD UI ── */
+function buildTabs() {
+  document.getElementById('verbTabs').innerHTML = VERBS.map(v =>
+    `<button class="verb-tab${v === verb ? ' active' : ''}" onclick="setVerb('${v}')">${v}</button>`
+  ).join('');
+}
+
+function buildTempora() {
+  document.getElementById('tempusRow').innerHTML = TEMPORA.map(t =>
+    `<button class="temp-btn${t === temp ? ' active' : ''}" onclick="setTemp('${t}')">${t}</button>`
+  ).join('');
+}
+
+const STUFE_LABELS = ["Tabelle", "10s + D&D", "D&D blind", "10s + Eingabe", "Eingabe blind"];
+function buildStufen() {
+  document.getElementById('stufenRow').innerHTML = [1,2,3,4,5].map(i => {
+    const key = verb + "_" + temp + "_" + i;
+    const done = doneMap[key];
+    const active = i === stufe;
+    return `<button class="stufe-btn${active ? ' active' : ''}${done ? ' done' : ''}" onclick="setStufe(${i})">
+      <span class="snum">${done && !active ? '✓' : i}</span>${STUFE_LABELS[i-1]}
+    </button>`;
+  }).join('');
+}
+
+function setVerb(v)  { clearTimer(); verb = v; buildTabs(); buildTempora(); buildStufen(); render(); }
+function setTemp(t)  { clearTimer(); temp = t; buildTempora(); buildStufen(); render(); }
+function setStufe(s) { clearTimer(); stufe = s; buildStufen(); render(); }
+
+/* ── RENDER DISPATCHER ── */
+function render() {
+  clearTimer();
+  const c = document.getElementById('content');
+  c.innerHTML = '';
+  if (stufe === 1)      renderView(c);
+  else if (stufe === 2) renderCountdownThenDrag(c);
+  else if (stufe === 3) renderDrag(c);
+  else if (stufe === 4) renderCountdownThenInput(c);
+  else                  renderInput(c);
+}
+
+/* ── STUFE 1: TABLE VIEW ── */
+function renderView(c) {
+  c.innerHTML = `
+    <div class="vsection-header">
+      <span class="vsection-hint">Lerne die Formen auswendig</span>
+    </div>
+    ${tableHTML(getRows())}
+    <div class="verb-actions">
+      <button class="vbtn vbtn-gold" onclick="doneMap[doneKey()]=true;buildStufen();setStufe(2)">
+        Weiter zu Stufe 2 →
+      </button>
+    </div>`;
+}
+
+/* ── STUFE 2 / 4: COUNTDOWN ── */
+function renderCountdownThenDrag(c) {
+  c.innerHTML = `
+    <div class="timer-wrap">
+      <div class="timer-label"><span>Merke dir die Tabelle!</span><span id="tsec">10</span></div>
+      <div class="timer-track"><div class="timer-fill" id="tfill"></div></div>
+    </div>
+    ${tableHTML(getRows())}`;
+  startTimer(10, () => renderDrag(c));
+}
+
+function renderCountdownThenInput(c) {
+  c.innerHTML = `
+    <div class="timer-wrap">
+      <div class="timer-label"><span>Merke dir die Tabelle!</span><span id="tsec">10</span></div>
+      <div class="timer-track"><div class="timer-fill" id="tfill"></div></div>
+    </div>
+    ${tableHTML(getRows())}`;
+  startTimer(10, () => renderInput(c));
+}
+
+/* ── DRAG AND DROP ── */
+let draggedChip = null;
+let dropZoneData = {};
+
+function renderDrag(c) {
+  const rows = getRows();
+  const correct = rows.map(r => r[1]);
+  let pool = [...correct];
+  let fi = 0;
+  while (pool.length < correct.length + 4 && fi < FAKES.length) {
+    if (!pool.includes(FAKES[fi])) pool.push(FAKES[fi]);
+    fi++;
+  }
+  pool = shuffle(pool);
+  dropZoneData = {};
+
+  const chips = pool.map((f, i) =>
+    `<div class="drag-chip" draggable="true" data-form="${f}" id="chip_${i}">${f}</div>`
+  ).join('');
+  const dropRows = rows.map((r, i) => `
+    <tr>
+      <td>${r[0]}</td>
+      <td><div class="drop-zone" id="dz_${i}" data-index="${i}">—</div></td>
+    </tr>`).join('');
+
+  c.innerHTML = `
+    <div class="vsection-header">
+      <span class="vsection-hint">Ziehe die richtigen Formen in die Tabelle</span>
+    </div>
+    <div class="drag-pool" id="dragPool">${chips}</div>
+    <table class="drop-table"><tbody>${dropRows}</tbody></table>
+    <div class="verb-actions">
+      <button class="vbtn vbtn-primary" onclick="checkDrag()">Auswerten</button>
+      <button class="vbtn vbtn-ghost" onclick="renderDrag(document.getElementById('content'))">Zurücksetzen</button>
+    </div>
+    <div id="feedbackBar"></div>`;
+  setupDragEvents();
+}
+
+function setupDragEvents() {
+  document.querySelectorAll('.drag-chip').forEach(chip => {
+    chip.addEventListener('dragstart', e => {
+      draggedChip = chip;
+      chip.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    chip.addEventListener('dragend', () => { draggedChip = null; chip.classList.remove('dragging'); });
+  });
+  document.querySelectorAll('.drop-zone').forEach(zone => {
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('over');
+      if (!draggedChip) return;
+      const idx = parseInt(zone.dataset.index);
+      const form = draggedChip.dataset.form;
+      if (dropZoneData[idx]) {
+        const oldForm = dropZoneData[idx];
+        const oldChip = document.querySelector(`.drag-chip[data-form="${oldForm}"]`);
+        if (oldChip) document.getElementById('dragPool').appendChild(oldChip);
+      }
+      dropZoneData[idx] = form;
+      zone.textContent = form;
+      zone.classList.add('filled');
+      draggedChip.remove();
+    });
+  });
+  const pool = document.getElementById('dragPool');
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    if (!draggedChip) return;
+    const idx = Object.keys(dropZoneData).find(k => dropZoneData[k] === draggedChip.dataset.form);
+    if (idx !== undefined) {
+      delete dropZoneData[idx];
+      const zone = document.getElementById('dz_' + idx);
+      zone.textContent = '—';
+      zone.classList.remove('filled');
+    }
+    pool.appendChild(draggedChip);
+  });
+}
+
+function checkDrag() {
+  const rows = getRows();
+  let correct = 0;
+  rows.forEach((r, i) => {
+    const zone = document.getElementById('dz_' + i);
+    if (!zone) return;
+    if (dropZoneData[i] === r[1]) {
+      zone.classList.add('correct'); zone.classList.remove('wrong'); correct++;
+    } else {
+      zone.classList.add('wrong'); zone.classList.remove('correct');
+    }
+  });
+  showFeedback(correct, rows.length);
+  if (correct === rows.length) markDone();
+}
+
+/* ── INPUT MODE ── */
+function renderInput(c) {
+  const rows = getRows();
+  const inputRows = rows.map((r, i) => `
+    <tr>
+      <td>${r[0]}</td>
+      <td>
+        <input type="text" id="inp_${i}" placeholder="…"
+               autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off">
+      </td>
+      <td><span class="hint" id="hint_${i}"></span></td>
+    </tr>`).join('');
+
+  c.innerHTML = `
+    <div class="vsection-header">
+      <span class="vsection-hint">Trage alle Formen ein</span>
+    </div>
+    <table class="input-table"><tbody>${inputRows}</tbody></table>
+    <div class="verb-actions">
+      <button class="vbtn vbtn-primary" onclick="checkInput()">Auswerten</button>
+      <button class="vbtn vbtn-ghost" onclick="renderInput(document.getElementById('content'))">Zurücksetzen</button>
+    </div>
+    <div id="feedbackBar"></div>`;
+  document.getElementById('inp_0').focus();
+  rows.forEach((_, i) => {
+    document.getElementById('inp_' + i).addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const next = document.getElementById('inp_' + (i + 1));
+        if (next) next.focus(); else checkInput();
+      }
+    });
+  });
+}
+
+function checkInput() {
+  const rows = getRows();
+  let correct = 0;
+  rows.forEach((r, i) => {
+    const inp  = document.getElementById('inp_' + i);
+    const hint = document.getElementById('hint_' + i);
+    if (!inp) return;
+    const val = inp.value.trim().toLowerCase();
+    if (val === r[1].toLowerCase()) {
+      inp.classList.add('correct'); inp.classList.remove('wrong');
+      if (hint) hint.textContent = ''; correct++;
+    } else {
+      inp.classList.add('wrong'); inp.classList.remove('correct');
+      if (hint) hint.textContent = '→ ' + r[1];
+    }
+  });
+  showFeedback(correct, rows.length);
+  if (correct === rows.length) markDone();
+}
+
+/* ── FEEDBACK ── */
+function showFeedback(correct, total) {
+  const bar = document.getElementById('feedbackBar');
+  if (!bar) return;
+  if (correct === total) {
+    bar.innerHTML = `<div class="verb-feedback ok">✓ Alle ${total} Formen richtig! <span class="verb-score">${total}/${total}</span></div>`;
+  } else {
+    bar.innerHTML = `<div class="verb-feedback err">✗ ${correct} von ${total} richtig — markierte Formen prüfen <span class="verb-score">${correct}/${total}</span></div>`;
+  }
+}
+
+/* ── MARK DONE + WIN ── */
+function markDone() {
+  doneMap[doneKey()] = true;
+  buildStufen();
+  const allDone = [1,2,3,4,5].every(s => doneMap[verb + "_" + temp + "_" + s]);
+  if (allDone) {
+    setTimeout(() => { showWin(); startConfetti(); }, 600);
+    return;
+  }
+  if (stufe < 5) {
+    const actions = document.querySelector('.verb-actions');
+    if (actions && !document.getElementById('nextBtn')) {
+      const nb = document.createElement('button');
+      nb.className = 'vbtn vbtn-gold'; nb.id = 'nextBtn';
+      nb.textContent = 'Weiter zu Stufe ' + (stufe + 1) + ' →';
+      nb.onclick = () => setStufe(stufe + 1);
+      actions.appendChild(nb);
+    }
+  }
+}
+
+function showWin() {
+  document.getElementById('content').innerHTML = `
+    <div class="win-screen">
+      <div class="win-stars">★ ★ ★</div>
+      <h2>Perfecto!</h2>
+      <p>Du hast <em>${verb}</em> im ${temp} auf allen fünf Stufen gemeistert.</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="vbtn vbtn-gold" onclick="nextTempus()">Nächstes Tempus →</button>
+        <button class="vbtn vbtn-ghost" onclick="setStufe(1)">Nochmals üben</button>
+      </div>
+    </div>`;
+}
+
+function nextTempus() {
+  clearTimer();
+  const idx = TEMPORA.indexOf(temp);
+  temp = TEMPORA[(idx + 1) % TEMPORA.length];
+  stufe = 1;
+  buildTempora(); buildStufen(); render();
+}
+
+/* ── TIMER ── */
+function startTimer(secs, cb) {
+  clearTimer();
+  let elapsed = 0;
+  const total = secs * 10;
+  timerInterval = setInterval(() => {
+    elapsed++;
+    const pct = Math.max(0, 100 - (elapsed / total) * 100);
+    const fill = document.getElementById('tfill');
+    const sec  = document.getElementById('tsec');
+    if (fill) fill.style.width = pct + '%';
+    if (sec)  sec.textContent = Math.ceil((total - elapsed) / 10);
+    if (elapsed >= total) { clearTimer(); cb(); }
+  }, 100);
+}
+function clearTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+
+/* ── HELPERS ── */
+function getRows() { return PERSONS.map((p, i) => [p, FORMS[verb][temp][i]]); }
+
+function tableHTML(rows) {
+  return `<table class="verb-table">
+    <caption>${verb} — ${temp}</caption>
+    <thead><tr><th>Person</th><th>Form</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+
+/* ── CONFETTI ── */
+function startConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const COLORS = ['#c49a2a','#e8c55a','#2a6640','#9b2a1a','#3a86ff','#a89060','#f4c842'];
+  const pieces = Array.from({length: 130}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    w: 8 + Math.random() * 8, h: 4 + Math.random() * 5,
+    angle: Math.random() * Math.PI * 2, spin: (Math.random() - 0.5) * 0.2,
+    vy: 2 + Math.random() * 3, vx: (Math.random() - 0.5) * 2,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)], alpha: 1
+  }));
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    pieces.forEach(p => {
+      p.y += p.vy; p.x += p.vx; p.angle += p.spin;
+      if (frame > 120) p.alpha = Math.max(0, p.alpha - 0.012);
+      if (p.alpha > 0 && p.y < canvas.height + 20) alive = true;
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.angle);
+      ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (alive) requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  draw();
+}
+
+/* ── INIT ── */
+buildTabs(); buildTempora(); buildStufen(); render();
+</script>
+</body>
+</html>
