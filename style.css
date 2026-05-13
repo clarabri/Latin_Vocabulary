@@ -149,6 +149,49 @@ p { margin-bottom: 1rem; }
   font-style: italic;
 }
 
+/* ── GRAMMAR SUB-GROUP (nested details inside .submenu) ── */
+.submenu-group {
+  margin-top: 0.45rem;
+  margin-bottom: 0.45rem;
+}
+.submenu-group > summary {
+  list-style: none;
+}
+.submenu-group > summary::-webkit-details-marker { display: none; }
+
+.menu-btn-group {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink2);
+  background: rgba(28,21,16,0.04);
+  border-color: var(--border);
+  position: relative;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 0;
+}
+.menu-btn-group::after {
+  content: '▾';
+  position: absolute;
+  right: 1rem;
+  font-style: normal;
+  color: var(--ink3);
+  transition: transform 0.2s ease;
+}
+.submenu-group[open] .menu-btn-group::after { transform: rotate(180deg); }
+.menu-btn-group:hover {
+  border-color: var(--gold);
+  background: #fffdf8;
+  color: var(--ink);
+}
+
+.submenu-nested {
+  margin-top: 0.35rem;
+  padding: 0.4rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(28,21,16,0.025);
+}
+
 /* ── APP SHELL ── */
 .shell { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 

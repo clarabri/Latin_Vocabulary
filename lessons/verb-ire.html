@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latein · ire – Formen & Komposita</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+/* ── PAGE LAYOUT ── */
+.verb-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+.verb-page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+.verb-page-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem; font-weight: 700; color: var(--ink); line-height: 1.15;
+}
+.verb-page-header h2 em { font-style: italic; color: var(--gold); }
+.verb-page-header p {
+  font-size: 0.9rem; color: var(--ink3); margin-top: 3px; margin-bottom: 0;
+  font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+/* ── SECTION TABS ── */
+.section-tabs {
+  display: flex; gap: 0;
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 1.5rem; background: var(--surface2);
+}
+.section-tab {
+  flex: 1; padding: 12px 0;
+  font-family: 'Source Serif 4', serif; font-size: 1rem; font-weight: 400;
+  background: none; border: none; cursor: pointer; color: var(--ink3);
+  transition: all 0.15s; letter-spacing: 0.02em;
+}
+.section-tab:not(:last-child) { border-right: 1px solid var(--border2); }
+.section-tab.active { background: var(--ink); color: var(--bg); }
+.section-tab:hover:not(.active) { background: var(--border); color: var(--ink); }
+.section-tab.done:not(.active) { color: var(--green); }
+.section-tab.done .stcheck { font-style: normal; color: var(--green); margin-right: 4px; }
+.section-tab.done.active .stcheck { color: var(--gold2); }
+
+/* ── TEMPUS GRID ── */
+.tempus-row {
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  gap: 6px; margin-bottom: 1.2rem;
+}
+.temp-btn {
+  padding: 7px 4px; font-family: 'DM Mono', monospace; font-size: 0.7rem;
+  background: none; border: 1px solid var(--border2);
+  border-radius: var(--radius); cursor: pointer; color: var(--ink2);
+  transition: all 0.15s; text-align: center; line-height: 1.3; letter-spacing: 0.02em;
+}
+.temp-btn.active { background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 500; }
+.temp-btn:hover:not(.active) { background: var(--surface2); color: var(--ink); }
+.temp-btn.done { border-color: var(--green); color: var(--green); }
+.temp-btn.done.active { background: var(--green); border-color: var(--green); color: #fff; }
+.temp-btn.done .tbcheck { font-style: normal; }
+
+/* ── STUFEN ── */
+.stufen-row {
+  display: grid; gap: 6px; margin-bottom: 1.8rem;
+}
+.stufen-row-5 { grid-template-columns: repeat(5, 1fr); }
+.stufen-row-3 { grid-template-columns: repeat(3, 1fr); }
+.stufe-btn {
+  padding: 10px 4px; font-family: 'DM Mono', monospace; font-size: 0.68rem;
+  background: none; border: 1px solid var(--border2);
+  border-radius: var(--radius); cursor: pointer; color: var(--ink3);
+  transition: all 0.15s; text-align: center; line-height: 1.4;
+  letter-spacing: 0.03em; text-transform: uppercase;
+}
+.stufe-btn .snum {
+  display: block; font-size: 1.3rem; font-family: 'Playfair Display', serif;
+  color: var(--ink2); margin-bottom: 3px; font-weight: 700;
+}
+.stufe-btn.active { border-color: var(--ink); background: var(--ink); color: #e8dcc8; }
+.stufe-btn.active .snum { color: var(--gold2); }
+.stufe-btn.done { border-color: var(--green); }
+.stufe-btn.done .snum { color: var(--green); }
+.stufe-btn:hover:not(.active) { border-color: var(--ink3); color: var(--ink2); }
+
+/* ── CONTENT AREA ── */
+.verb-content {
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  background: var(--surface); min-height: 300px; padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+/* ── TASK BOX ── */
+.task-box {
+  background: #fdf8ec; border: 1px solid rgba(196,154,42,0.35);
+  border-left: 3px solid var(--gold); border-radius: var(--radius);
+  padding: 0.85rem 1.1rem; margin-bottom: 1.4rem;
+}
+.task-box .task-label {
+  font-family: 'DM Mono', monospace; font-size: 0.67rem;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--gold); margin-bottom: 5px;
+}
+.task-box .task-text {
+  font-family: 'Source Serif 4', serif; font-size: 1rem;
+  color: var(--ink); line-height: 1.55; margin: 0;
+}
+.task-box .task-text strong { font-weight: 600; }
+
+/* ── VERB TABLE ── */
+.verb-table { width: 100%; border-collapse: collapse; }
+.verb-table caption {
+  font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.15rem;
+  color: var(--ink2); margin-bottom: 10px; caption-side: top; text-align: left;
+}
+.verb-table th {
+  font-family: 'DM Mono', monospace; font-size: 0.67rem; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--ink3); padding: 6px 12px;
+  border-bottom: 1px solid var(--border); text-align: left; font-weight: 400;
+}
+.verb-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 1.05rem; }
+.verb-table td:first-child { color: var(--ink3); font-size: 0.82rem; font-family: 'DM Mono', monospace; width: 90px; }
+.verb-table td:last-child { font-weight: 600; }
+.verb-table tr:last-child td { border-bottom: none; }
+
+/* ── TIMER ── */
+.timer-wrap { margin-bottom: 14px; }
+.timer-label {
+  font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--ink3);
+  margin-bottom: 6px; display: flex; justify-content: space-between;
+}
+.timer-track { height: 3px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+.timer-fill {
+  height: 100%; width: 100%; background: linear-gradient(90deg, var(--gold), var(--gold2));
+  border-radius: 99px; transition: width 0.1s linear;
+}
+
+/* ── DRAG & DROP ── */
+.drag-pool {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+  min-height: 44px; padding: 10px;
+  border: 1.5px dashed var(--border2); border-radius: var(--radius); background: var(--bg);
+}
+.drag-chip {
+  padding: 5px 14px; background: var(--surface); border: 1.5px solid var(--border2);
+  border-radius: 99px; cursor: grab; font-family: 'Source Serif 4', serif; font-size: 1rem;
+  font-weight: 600; color: var(--ink); user-select: none; transition: all 0.13s;
+}
+.drag-chip:hover { border-color: var(--gold); background: #fffdf5; }
+.drag-chip.dragging { opacity: 0.35; }
+
+.drop-table { width: 100%; border-collapse: collapse; }
+.drop-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.drop-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--ink3); width: 90px; }
+.drop-zone {
+  min-width: 130px; min-height: 34px; border: 1.5px dashed var(--border2);
+  border-radius: var(--radius); padding: 4px 10px; display: inline-flex;
+  align-items: center; font-family: 'Source Serif 4', serif; font-size: 1rem;
+  font-weight: 600; transition: all 0.13s; color: var(--ink3);
+}
+.drop-zone.over { border-color: var(--gold); background: #fffdf5; }
+.drop-zone.filled { border-style: solid; border-color: var(--border2); color: var(--ink); }
+.drop-zone.correct { border-color: var(--green); background: #edf7ed; color: var(--green); }
+.drop-zone.wrong { border-color: var(--red); background: #fdf0ee; color: var(--red); }
+
+/* ── INPUT MODE ── */
+.input-table { width: 100%; border-collapse: collapse; }
+.input-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); }
+.input-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--ink3); width: 90px; }
+.input-table input {
+  font-family: 'Source Serif 4', serif; font-size: 1rem; font-weight: 600;
+  border: 1.5px solid var(--border2); border-radius: 8px; padding: 6px 10px;
+  background: var(--surface2); color: var(--ink); width: 200px; outline: none;
+  transition: border-color 0.13s;
+}
+.input-table input:focus { border-color: var(--gold); background: var(--surface); }
+.input-table input.correct { border-color: var(--green); background: #edf7ed; color: var(--green); }
+.input-table input.wrong { border-color: var(--red); background: #fdf0ee; color: var(--red); }
+.input-table .hint { font-size: 0.82rem; color: var(--red); margin-left: 8px; font-style: italic; }
+
+/* ── KOMPOSITA TABLE ── */
+.komp-table { width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; }
+.komp-table th {
+  font-family: 'DM Mono', monospace; font-size: 0.67rem; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--ink3); padding: 6px 12px;
+  border-bottom: 1px solid var(--border); text-align: left; font-weight: 400;
+}
+.komp-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.komp-table tr:last-child td { border-bottom: none; }
+.komp-inf {
+  font-family: 'Playfair Display', serif; font-size: 1.05rem;
+  font-weight: 700; font-style: italic; color: var(--red); min-width: 90px;
+}
+.komp-stammf { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--ink2); }
+.komp-de { font-size: 0.98rem; color: var(--ink); }
+.komp-note { font-size: 0.8rem; color: var(--ink3); font-style: italic; }
+.komp-note-inline { font-size: 0.8rem; color: var(--ink3); font-style: italic; }
+
+/* The drop-zone inside the komp table needs more width for German meanings */
+.komp-table .drop-zone { min-width: 200px; font-weight: 400; font-size: 0.95rem; }
+
+/* ── ACTIONS ── */
+.verb-actions { display: flex; gap: 8px; margin-top: 16px; align-items: center; flex-wrap: wrap; }
+.vbtn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0.6rem 1.2rem; border-radius: 8px;
+  font-family: 'Source Serif 4', serif; font-size: 14px;
+  cursor: pointer; border: 1.5px solid transparent; transition: all 0.13s;
+}
+.vbtn-primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.vbtn-primary:hover { background: #2e2820; }
+.vbtn-ghost { background: var(--surface); color: var(--ink2); border-color: var(--border2); }
+.vbtn-ghost:hover { border-color: var(--ink3); background: var(--surface2); color: var(--ink); }
+.vbtn-gold { background: var(--gold); border-color: var(--gold); color: #fff; }
+.vbtn-gold:hover { background: #b8962e; }
+
+/* ── FEEDBACK ── */
+.verb-feedback {
+  display: flex; align-items: center; gap: 10px; margin-top: 14px;
+  padding: 10px 14px; border-radius: var(--radius); font-size: 0.9rem;
+}
+.verb-feedback.ok { background: #edf7ed; border: 1px solid #aad4a7; color: var(--green); }
+.verb-feedback.err { background: #fdf0ee; border: 1px solid #f0b8ad; color: var(--red); }
+.verb-score {
+  font-family: 'DM Mono', monospace; font-size: 0.78rem; margin-left: auto;
+  padding: 3px 10px; border-radius: 99px; background: rgba(0,0,0,0.07);
+}
+
+/* ── WIN SCREEN ── */
+.win-screen { text-align: center; padding: 3rem 1rem; }
+.win-stars { font-size: 3rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
+.win-screen h2 {
+  font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700;
+  font-style: italic; color: var(--gold); margin-bottom: 0.4rem;
+}
+.win-screen p { color: var(--ink2); font-size: 1rem; margin-bottom: 1.5rem; }
+
+@media (max-width: 600px) {
+  .tempus-row { grid-template-columns: repeat(3, 1fr); }
+  .verb-page { padding: 1.2rem 1rem 3rem; }
+  .komp-table .drop-zone { min-width: 140px; }
+}
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;"></canvas>
+
+<div class="shell" id="app-shell">
+  <div class="topbar">
+    <div class="topbar-title">
+      <span class="dot"></span>
+      Latein
+      <span class="topbar-sub">ire – Formen & Komposita</span>
+    </div>
+    <button class="btn btn-red" onclick="location.href='../index.html'" style="margin-left:12px;padding:0.45rem 0.9rem;font-size:13px;">← zurück</button>
+  </div>
+
+  <div style="flex:1;overflow-y:auto;">
+    <div class="verb-page">
+      <div class="verb-page-header">
+        <h2>Verbum <em>Irregulare:</em> ire</h2>
+        <p>ire, eo, ii, itum — Formen & Komposita</p>
+      </div>
+
+      <!-- SECTION TABS -->
+      <div class="section-tabs" id="sectionTabs"></div>
+
+      <!-- FORMEN SECTION -->
+      <div id="formen-section">
+        <div class="tempus-row" id="tempusRow"></div>
+        <div class="stufen-row stufen-row-5" id="stufenRow"></div>
+        <div class="verb-content" id="content"></div>
+      </div>
+
+      <!-- KOMPOSITA SECTION -->
+      <div id="komp-section" style="display:none;">
+        <div class="stufen-row stufen-row-3" id="kompStufenRow"></div>
+        <div class="verb-content" id="kompContent"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── DATA ── */
+const TEMPORA = ["Präsens", "Imperfekt", "Futur I", "Perfekt", "Plusquamp.", "Futur II"];
+const PERSONS = ["1. Sg.", "2. Sg.", "3. Sg.", "1. Pl.", "2. Pl.", "3. Pl."];
+
+const FORMS = {
+  "Präsens":    ["eo",    "is",    "it",    "imus",    "itis",    "eunt"],
+  "Imperfekt":  ["ibam",  "ibas",  "ibat",  "ibamus",  "ibatis",  "ibant"],
+  "Futur I":    ["ibo",   "ibis",  "ibit",  "ibimus",  "ibitis",  "ibunt"],
+  "Perfekt":    ["ii",    "isti",  "iit",   "iimus",   "istis",   "ierunt"],
+  "Plusquamp.": ["ieram", "ieras", "ierat", "ieramus", "ieratis", "ierant"],
+  "Futur II":   ["iero",  "ieris", "ierit", "ierimus", "ieritis", "ierint"]
+};
+
+const FAKES = ["ibatis","ibitis","eamus","imus","ibis","ibunt","eunt","iero",
+               "ierat","istis","ibamus","iimus","ibam","itis","ierant"];
+
+const COMPOSITA = [
+  { inf: "ire",    stammf: "eo, ii, itum",          de: "gehen",                          note: "" },
+  { inf: "adire",  stammf: "adeo, adii, aditum",    de: "herangehen, aufsuchen",           note: "+ Akk." },
+  { inf: "inire",  stammf: "ineo, inii, initum",    de: "beginnen, hineingehen",           note: "consilium inire: einen Plan fassen" },
+  { inf: "perire", stammf: "pereo, perii, —",       de: "zugrunde gehen, umkommen",        note: "" },
+  { inf: "redire", stammf: "redeo, redii, reditum", de: "zurückkehren, zurückgehen",       note: "" },
+  { inf: "abire",  stammf: "abeo, abii, abitum",    de: "fortgehen, weggehen",             note: "" },
+  { inf: "subire", stammf: "subeo, subii, subitum", de: "auf sich nehmen",                 note: "auch: untergehen" },
+  { inf: "exire",  stammf: "exeo, exii, exitum",    de: "hinausgehen, herauskommen",       note: "" }
+];
+
+/* ── STATE ── */
+let section    = 'formen';
+let temp       = "Präsens";
+let stufe      = 1;
+let kompStufe  = 1;
+let timerInterval = null;
+let doneMap    = {};
+let draggedChip = null;
+
+/* ── DONE HELPERS ── */
+function doneKey()          { return "ire_" + temp + "_" + stufe; }
+function isTempusDone(t)    { return [1,2,3,4,5].every(s => doneMap["ire_" + t + "_" + s]); }
+function isFormenDone()     { return TEMPORA.every(t => isTempusDone(t)); }
+function isKompDone()       { return [1,2,3].every(s => doneMap["komp_" + s]); }
+
+/* ── SECTION ── */
+function setSection(s) {
+  section = s;
+  document.getElementById('formen-section').style.display = s === 'formen'    ? '' : 'none';
+  document.getElementById('komp-section').style.display   = s === 'komposita' ? '' : 'none';
+  buildSectionTabs();
+  if (s === 'formen') { buildTempora(); buildStufen(); render(); }
+  else                { buildKompStufen(); renderKomp(); }
+}
+
+/* ── BUILD UI ── */
+function buildSectionTabs() {
+  const tabs = [
+    { id: 'formen',    label: 'Formen lernen', done: isFormenDone()  },
+    { id: 'komposita', label: 'Komposita',      done: isKompDone()   }
+  ];
+  document.getElementById('sectionTabs').innerHTML = tabs.map(t => {
+    const active = section === t.id;
+    const check  = t.done ? `<span class="stcheck">✓</span>` : '';
+    return `<button class="section-tab${active ? ' active' : ''}${t.done ? ' done' : ''}" onclick="setSection('${t.id}')">${check}${t.label}</button>`;
+  }).join('');
+}
+
+function buildTempora() {
+  document.getElementById('tempusRow').innerHTML = TEMPORA.map(t => {
+    const done   = isTempusDone(t);
+    const active = t === temp;
+    const check  = done ? `<span class="tbcheck">✓ </span>` : '';
+    return `<button class="temp-btn${active ? ' active' : ''}${done ? ' done' : ''}" onclick="setTemp('${t}')">${check}${t}</button>`;
+  }).join('');
+}
+
+const STUFE_LABELS = ["Tabelle", "10s + D&D", "D&D blind", "10s + Eingabe", "Eingabe blind"];
+function buildStufen() {
+  document.getElementById('stufenRow').innerHTML = [1,2,3,4,5].map(i => {
+    const done   = doneMap["ire_" + temp + "_" + i];
+    const active = i === stufe;
+    return `<button class="stufe-btn${active ? ' active' : ''}${done ? ' done' : ''}" onclick="setStufe(${i})">
+      <span class="snum">${done && !active ? '✓' : i}</span>${STUFE_LABELS[i-1]}
+    </button>`;
+  }).join('');
+}
+
+const KOMP_LABELS = ["Überblick", "Zuordnen", "Eingabe"];
+function buildKompStufen() {
+  document.getElementById('kompStufenRow').innerHTML = [1,2,3].map(i => {
+    const done   = doneMap["komp_" + i];
+    const active = i === kompStufe;
+    return `<button class="stufe-btn${active ? ' active' : ''}${done ? ' done' : ''}" onclick="setKompStufe(${i})">
+      <span class="snum">${done && !active ? '✓' : i}</span>${KOMP_LABELS[i-1]}
+    </button>`;
+  }).join('');
+}
+
+function setTemp(t)      { clearTimer(); temp = t; buildTempora(); buildStufen(); render(); }
+function setStufe(s)     { clearTimer(); stufe = s; buildStufen(); render(); }
+function setKompStufe(s) { clearTimer(); kompStufe = s; buildKompStufen(); renderKomp(); }
+
+/* ════════════════════════════════
+   FORMEN SECTION
+════════════════════════════════ */
+function render() {
+  clearTimer();
+  const c = document.getElementById('content');
+  c.innerHTML = '';
+  if      (stufe === 1) renderView(c);
+  else if (stufe === 2) renderCountdownThenDrag(c);
+  else if (stufe === 3) renderDrag(c);
+  else if (stufe === 4) renderCountdownThenInput(c);
+  else                  renderInput(c);
+}
+
+/* STUFE 1 */
+function renderView(c) {
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 1 — Formen kennenlernen</div>
+      <p class="task-text">Hier siehst du alle Formen von <strong>ire</strong> im <strong>${temp}</strong>. Lies sie aufmerksam durch und präge sie dir gut ein – dann geht es weiter zu Stufe 2.</p>
+    </div>
+    ${tableHTML(getRows())}
+    <div class="verb-actions">
+      <button class="vbtn vbtn-gold" onclick="doneMap[doneKey()]=true;buildStufen();buildTempora();buildSectionTabs();setStufe(2)">
+        Weiter zu Stufe 2 →
+      </button>
+    </div>`;
+}
+
+/* STUFE 2 */
+function renderCountdownThenDrag(c) {
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 2 — Einprägen & zuordnen</div>
+      <p class="task-text">Du hast <strong>10 Sekunden</strong>, um dir die Formen nochmals einzuprägen. Danach ziehst du die richtigen Formen per <strong>Drag & Drop</strong> in die passende Zeile.</p>
+    </div>
+    <div class="timer-wrap">
+      <div class="timer-label"><span>Noch Zeit zum Einprägen …</span><span id="tsec">10</span></div>
+      <div class="timer-track"><div class="timer-fill" id="tfill"></div></div>
+    </div>
+    ${tableHTML(getRows())}`;
+  startTimer(10, () => renderDrag(c));
+}
+
+/* STUFE 4 */
+function renderCountdownThenInput(c) {
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 4 — Einprägen & eintippen</div>
+      <p class="task-text">Du hast <strong>10 Sekunden</strong>, um dir die Formen ein letztes Mal anzusehen. Danach tippst du alle Formen selbst in die Felder ein.</p>
+    </div>
+    <div class="timer-wrap">
+      <div class="timer-label"><span>Noch Zeit zum Einprägen …</span><span id="tsec">10</span></div>
+      <div class="timer-track"><div class="timer-fill" id="tfill"></div></div>
+    </div>
+    ${tableHTML(getRows())}`;
+  startTimer(10, () => renderInput(c));
+}
+
+/* STUFE 3: DRAG & DROP (Formen) */
+let dropZoneData = {};
+
+function renderDrag(c) {
+  const rows = getRows();
+  const correct = rows.map(r => r[1]);
+  let pool = [...correct];
+  let fi = 0;
+  while (pool.length < correct.length + 4 && fi < FAKES.length) {
+    if (!pool.includes(FAKES[fi])) pool.push(FAKES[fi]);
+    fi++;
+  }
+  pool = shuffle(pool);
+  dropZoneData = {};
+
+  const chips    = pool.map((f, i) => `<div class="drag-chip" draggable="true" data-form="${f}" id="dchip_${i}">${f}</div>`).join('');
+  const dropRows = rows.map((r, i) => `
+    <tr>
+      <td>${r[0]}</td>
+      <td><div class="drop-zone" id="dz_${i}" data-index="${i}">—</div></td>
+    </tr>`).join('');
+
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 3 — Formen zuordnen (ohne Vorlage)</div>
+      <p class="task-text">Jetzt ohne Spickzettel: Ziehe jede Form per <strong>Drag & Drop</strong> in die richtige Zeile. Falsch platzierte Formen werden beim Auswerten markiert.</p>
+    </div>
+    <div class="drag-pool" id="dragPool">${chips}</div>
+    <table class="drop-table"><tbody>${dropRows}</tbody></table>
+    <div class="verb-actions">
+      <button class="vbtn vbtn-primary" onclick="checkDrag()">Auswerten</button>
+      <button class="vbtn vbtn-ghost" onclick="renderDrag(document.getElementById('content'))">Zurücksetzen</button>
+    </div>
+    <div id="feedbackBar"></div>`;
+  setupDragEvents('dragPool', 'dz_', dropZoneData, null);
+}
+
+function checkDrag() {
+  const rows = getRows();
+  let correct = 0;
+  rows.forEach((r, i) => {
+    const zone = document.getElementById('dz_' + i);
+    if (!zone) return;
+    if (dropZoneData[i] === r[1]) {
+      zone.classList.add('correct'); zone.classList.remove('wrong'); correct++;
+    } else {
+      zone.classList.add('wrong'); zone.classList.remove('correct');
+    }
+  });
+  showFeedback('feedbackBar', correct, rows.length);
+  if (correct === rows.length) markFormenDone();
+}
+
+/* STUFE 5: INPUT (Formen) */
+function renderInput(c) {
+  const rows = getRows();
+  const inputRows = rows.map((r, i) => `
+    <tr>
+      <td>${r[0]}</td>
+      <td><input type="text" id="inp_${i}" placeholder="…"
+                 autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off"></td>
+      <td><span class="hint" id="hint_${i}"></span></td>
+    </tr>`).join('');
+
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 5 — Formen eintippen (ohne Vorlage)</div>
+      <p class="task-text">Die letzte Prüfung – ganz ohne Hilfe: Tippe alle Formen aus dem Gedächtnis in die Felder. Mit <strong>Enter</strong> springst du zur nächsten Zeile.</p>
+    </div>
+    <table class="input-table"><tbody>${inputRows}</tbody></table>
+    <div class="verb-actions">
+      <button class="vbtn vbtn-primary" onclick="checkInput()">Auswerten</button>
+      <button class="vbtn vbtn-ghost" onclick="renderInput(document.getElementById('content'))">Zurücksetzen</button>
+    </div>
+    <div id="feedbackBar"></div>`;
+  document.getElementById('inp_0').focus();
+  rows.forEach((_, i) => {
+    document.getElementById('inp_' + i).addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const next = document.getElementById('inp_' + (i + 1));
+        if (next) next.focus(); else checkInput();
+      }
+    });
+  });
+}
+
+function checkInput() {
+  const rows = getRows();
+  let correct = 0;
+  rows.forEach((r, i) => {
+    const inp  = document.getElementById('inp_' + i);
+    const hint = document.getElementById('hint_' + i);
+    if (!inp) return;
+    if (inp.value.trim().toLowerCase() === r[1].toLowerCase()) {
+      inp.classList.add('correct'); inp.classList.remove('wrong');
+      if (hint) hint.textContent = ''; correct++;
+    } else {
+      inp.classList.add('wrong'); inp.classList.remove('correct');
+      if (hint) hint.textContent = '→ ' + r[1];
+    }
+  });
+  showFeedback('feedbackBar', correct, rows.length);
+  if (correct === rows.length) markFormenDone();
+}
+
+function markFormenDone() {
+  doneMap[doneKey()] = true;
+  buildStufen(); buildTempora(); buildSectionTabs();
+  if ([1,2,3,4,5].every(s => doneMap["ire_" + temp + "_" + s])) {
+    setTimeout(() => { showFormenWin(); startConfetti(); }, 600);
+    return;
+  }
+  if (stufe < 5) addNextBtn('content', stufe + 1, () => setStufe(stufe + 1));
+}
+
+function showFormenWin() {
+  document.getElementById('content').innerHTML = `
+    <div class="win-screen">
+      <div class="win-stars">★ ★ ★</div>
+      <h2>Perfecto!</h2>
+      <p>Du hast <em>ire</em> im ${temp} auf allen fünf Stufen gemeistert.</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="vbtn vbtn-gold" onclick="nextTempus()">Nächstes Tempus →</button>
+        <button class="vbtn vbtn-ghost" onclick="setStufe(1)">Nochmals üben</button>
+      </div>
+    </div>`;
+}
+
+function nextTempus() {
+  clearTimer();
+  temp = TEMPORA[(TEMPORA.indexOf(temp) + 1) % TEMPORA.length];
+  stufe = 1;
+  buildTempora(); buildStufen(); render();
+}
+
+/* ════════════════════════════════
+   KOMPOSITA SECTION
+════════════════════════════════ */
+function renderKomp() {
+  clearTimer();
+  const c = document.getElementById('kompContent');
+  c.innerHTML = '';
+  if      (kompStufe === 1) renderKompView(c);
+  else if (kompStufe === 2) renderKompDrag(c);
+  else                      renderKompInput(c);
+}
+
+/* KOMP STUFE 1: ÜBERBLICK */
+function renderKompView(c) {
+  const rows = COMPOSITA.map(k => `
+    <tr>
+      <td class="komp-inf">${k.inf}</td>
+      <td class="komp-stammf">${k.stammf}</td>
+      <td class="komp-de">${k.de}</td>
+      <td class="komp-note">${k.note}</td>
+    </tr>`).join('');
+
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 1 — Überblick</div>
+      <p class="task-text">Hier siehst du <strong>ire</strong> und alle seine Komposita mit Stammformen und deutschen Bedeutungen. Achte besonders auf die <strong>Präfixe</strong> – sie verraten die Bedeutung!</p>
+    </div>
+    <table class="komp-table">
+      <thead><tr>
+        <th>Infinitiv</th><th>Stammformen</th><th>Bedeutung</th><th>Besonderheit</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="verb-actions">
+      <button class="vbtn vbtn-gold" onclick="doneMap['komp_1']=true;buildKompStufen();buildSectionTabs();setKompStufe(2)">
+        Weiter zu Stufe 2 →
+      </button>
+    </div>`;
+}
+
+/* KOMP STUFE 2: DRAG & DROP (lat → de) */
+let kompDragData = {};
+
+function renderKompDrag(c) {
+  const items = shuffle(COMPOSITA.map((k, i) => ({ ...k, origIdx: i })));
+  const pool  = shuffle(COMPOSITA.map((k, i) => ({ de: k.de, idx: i })));
+  kompDragData = {};
+
+  const chips = pool.map((p, i) =>
+    `<div class="drag-chip" draggable="true" data-idx="${p.idx}" id="kchip_${i}">${p.de}</div>`
+  ).join('');
+
+  const dropRows = items.map((k, i) => `
+    <tr>
+      <td class="komp-inf">${k.inf}</td>
+      <td class="komp-stammf">${k.stammf}</td>
+      <td><div class="drop-zone" id="kdz_${i}" data-index="${i}" data-correct="${k.origIdx}">—</div></td>
+    </tr>`).join('');
+
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 2 — Bedeutungen zuordnen</div>
+      <p class="task-text">Ziehe die deutsche Bedeutung per <strong>Drag & Drop</strong> in die richtige Zeile neben dem lateinischen Verb. Erkennst du alle Präfixe?</p>
+    </div>
+    <div class="drag-pool" id="kompPool">${chips}</div>
+    <table class="komp-table drop-table">
+      <thead><tr><th>Infinitiv</th><th>Stammformen</th><th>Bedeutung</th></tr></thead>
+      <tbody>${dropRows}</tbody>
+    </table>
+    <div class="verb-actions">
+      <button class="vbtn vbtn-primary" onclick="checkKompDrag()">Auswerten</button>
+      <button class="vbtn vbtn-ghost" onclick="renderKompDrag(document.getElementById('kompContent'))">Zurücksetzen</button>
+    </div>
+    <div id="kompFeedback"></div>`;
+  setupKompDragEvents();
+}
+
+function setupKompDragEvents() {
+  document.querySelectorAll('#kompContent .drag-chip').forEach(chip => {
+    chip.addEventListener('dragstart', e => {
+      draggedChip = chip;
+      chip.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    chip.addEventListener('dragend', () => { draggedChip = null; chip.classList.remove('dragging'); });
+  });
+  document.querySelectorAll('#kompContent .drop-zone').forEach(zone => {
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('over');
+      if (!draggedChip) return;
+      const idx     = parseInt(zone.dataset.index);
+      const newIdx  = parseInt(draggedChip.dataset.idx);
+      // If zone already occupied, un-hide old chip in pool
+      if (kompDragData[idx] != null) {
+        const old = document.querySelector(`#kompPool .drag-chip[data-idx="${kompDragData[idx]}"]`);
+        if (old) old.style.display = '';
+      }
+      kompDragData[idx] = newIdx;
+      zone.textContent  = COMPOSITA[newIdx].de;
+      zone.classList.add('filled');
+      draggedChip.style.display = 'none';
+      draggedChip = null;
+    });
+  });
+  const pool = document.getElementById('kompPool');
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    if (!draggedChip) return;
+    const occupied = Object.keys(kompDragData).find(k => kompDragData[k] === parseInt(draggedChip.dataset.idx));
+    if (occupied != null) {
+      delete kompDragData[occupied];
+      const z = document.getElementById('kdz_' + occupied);
+      if (z) { z.textContent = '—'; z.classList.remove('filled'); }
+    }
+    draggedChip.style.display = '';
+    draggedChip = null;
+  });
+}
+
+function checkKompDrag() {
+  let correct = 0;
+  document.querySelectorAll('#kompContent .drop-zone').forEach(zone => {
+    const idx      = parseInt(zone.dataset.index);
+    const expected = parseInt(zone.dataset.correct);
+    if (kompDragData[idx] === expected) {
+      zone.classList.add('correct'); zone.classList.remove('wrong'); correct++;
+    } else {
+      zone.classList.add('wrong'); zone.classList.remove('correct');
+    }
+  });
+  showFeedback('kompFeedback', correct, COMPOSITA.length);
+  if (correct === COMPOSITA.length) markKompDone(2);
+}
+
+/* KOMP STUFE 3: EINGABE (de → lat) */
+function renderKompInput(c) {
+  const items = shuffle([...COMPOSITA]);
+  const rows  = items.map((k, i) => `
+    <tr>
+      <td class="komp-de">
+        ${k.de}${k.note ? ` <span class="komp-note-inline">(${k.note})</span>` : ''}
+      </td>
+      <td>
+        <input type="text" id="kinp_${i}" data-correct="${k.inf}"
+               placeholder="Infinitiv …"
+               autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off">
+      </td>
+      <td><span class="hint" id="khint_${i}"></span></td>
+    </tr>`).join('');
+
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 3 — Infinitiv eintippen</div>
+      <p class="task-text">Tippe zu jeder deutschen Bedeutung den richtigen lateinischen <strong>Infinitiv</strong> ein. Mit <strong>Enter</strong> springst du zur nächsten Zeile.</p>
+    </div>
+    <table class="input-table"><tbody>${rows}</tbody></table>
+    <div class="verb-actions">
+      <button class="vbtn vbtn-primary" onclick="checkKompInput()">Auswerten</button>
+      <button class="vbtn vbtn-ghost" onclick="renderKompInput(document.getElementById('kompContent'))">Zurücksetzen</button>
+    </div>
+    <div id="kompFeedback"></div>`;
+  document.getElementById('kinp_0').focus();
+  items.forEach((_, i) => {
+    document.getElementById('kinp_' + i).addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const next = document.getElementById('kinp_' + (i + 1));
+        if (next) next.focus(); else checkKompInput();
+      }
+    });
+  });
+}
+
+function checkKompInput() {
+  let correct = 0;
+  for (let i = 0; i < COMPOSITA.length; i++) {
+    const inp  = document.getElementById('kinp_' + i);
+    const hint = document.getElementById('khint_' + i);
+    if (!inp) continue;
+    if (inp.value.trim().toLowerCase() === inp.dataset.correct.toLowerCase()) {
+      inp.classList.add('correct'); inp.classList.remove('wrong');
+      if (hint) hint.textContent = ''; correct++;
+    } else {
+      inp.classList.add('wrong'); inp.classList.remove('correct');
+      if (hint) hint.textContent = '→ ' + inp.dataset.correct;
+    }
+  }
+  showFeedback('kompFeedback', correct, COMPOSITA.length);
+  if (correct === COMPOSITA.length) markKompDone(3);
+}
+
+function markKompDone(s) {
+  doneMap["komp_" + s] = true;
+  buildKompStufen(); buildSectionTabs();
+  if (isKompDone()) {
+    setTimeout(() => { showKompWin(); startConfetti(); }, 600);
+    return;
+  }
+  if (s < 3) addNextBtn('kompContent', s + 1, () => setKompStufe(s + 1));
+}
+
+function showKompWin() {
+  document.getElementById('kompContent').innerHTML = `
+    <div class="win-screen">
+      <div class="win-stars">★ ★ ★</div>
+      <h2>Perfecto!</h2>
+      <p>Du kennst alle Komposita von <em>ire</em> – prima!</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="vbtn vbtn-ghost" onclick="setKompStufe(1)">Nochmals üben</button>
+      </div>
+    </div>`;
+}
+
+/* ── SHARED DRAG EVENTS (Formen) ── */
+function setupDragEvents(poolId, zonePrefix, dataObj) {
+  document.querySelectorAll('#' + poolId + ' .drag-chip').forEach(chip => {
+    chip.addEventListener('dragstart', e => {
+      draggedChip = chip;
+      chip.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    chip.addEventListener('dragend', () => { draggedChip = null; chip.classList.remove('dragging'); });
+  });
+  document.querySelectorAll('#content .drop-zone').forEach(zone => {
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('over');
+      if (!draggedChip) return;
+      const idx  = parseInt(zone.dataset.index);
+      const form = draggedChip.dataset.form;
+      if (dataObj[idx] != null) {
+        const old = document.querySelector('#' + poolId + ' .drag-chip[data-form="' + dataObj[idx] + '"]');
+        if (old) old.style.display = '';
+      }
+      dataObj[idx] = form;
+      zone.textContent = form;
+      zone.classList.add('filled');
+      draggedChip.style.display = 'none';
+      draggedChip = null;
+    });
+  });
+  const pool = document.getElementById(poolId);
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    if (!draggedChip) return;
+    const key = Object.keys(dataObj).find(k => dataObj[k] === draggedChip.dataset.form);
+    if (key != null) {
+      delete dataObj[key];
+      const z = document.getElementById(zonePrefix + key);
+      if (z) { z.textContent = '—'; z.classList.remove('filled'); }
+    }
+    draggedChip.style.display = '';
+    draggedChip = null;
+  });
+}
+
+/* ── SHARED HELPERS ── */
+function showFeedback(barId, correct, total) {
+  const bar = document.getElementById(barId);
+  if (!bar) return;
+  bar.innerHTML = correct === total
+    ? `<div class="verb-feedback ok">✓ Alle ${total} richtig! <span class="verb-score">${total}/${total}</span></div>`
+    : `<div class="verb-feedback err">✗ ${correct} von ${total} richtig — markierte Felder prüfen <span class="verb-score">${correct}/${total}</span></div>`;
+}
+
+function addNextBtn(contentId, nextStufe, fn) {
+  const actions = document.querySelector('#' + contentId + ' .verb-actions');
+  if (actions && !document.getElementById('nextBtn_' + contentId)) {
+    const nb = document.createElement('button');
+    nb.className = 'vbtn vbtn-gold'; nb.id = 'nextBtn_' + contentId;
+    nb.textContent = 'Weiter zu Stufe ' + nextStufe + ' →';
+    nb.onclick = fn;
+    actions.appendChild(nb);
+  }
+}
+
+function getRows() { return PERSONS.map((p, i) => [p, FORMS[temp][i]]); }
+
+function tableHTML(rows) {
+  return `<table class="verb-table">
+    <caption>ire — ${temp}</caption>
+    <thead><tr><th>Person</th><th>Form</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+/* ── TIMER ── */
+function startTimer(secs, cb) {
+  clearTimer();
+  let elapsed = 0;
+  const total = secs * 10;
+  timerInterval = setInterval(() => {
+    elapsed++;
+    const fill = document.getElementById('tfill');
+    const sec  = document.getElementById('tsec');
+    if (fill) fill.style.width = Math.max(0, 100 - (elapsed / total) * 100) + '%';
+    if (sec)  sec.textContent  = Math.ceil((total - elapsed) / 10);
+    if (elapsed >= total) { clearTimer(); cb(); }
+  }, 100);
+}
+function clearTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+
+/* ── CONFETTI ── */
+function startConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const COLORS = ['#c49a2a','#e8c55a','#2a6640','#9b2a1a','#3a86ff','#a89060','#f4c842'];
+  const pieces = Array.from({length: 130}, () => ({
+    x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height,
+    w: 8 + Math.random() * 8, h: 4 + Math.random() * 5,
+    angle: Math.random() * Math.PI * 2, spin: (Math.random() - 0.5) * 0.2,
+    vy: 2 + Math.random() * 3, vx: (Math.random() - 0.5) * 2,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)], alpha: 1
+  }));
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    pieces.forEach(p => {
+      p.y += p.vy; p.x += p.vx; p.angle += p.spin;
+      if (frame > 120) p.alpha = Math.max(0, p.alpha - 0.012);
+      if (p.alpha > 0 && p.y < canvas.height + 20) alive = true;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.angle);
+      ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (alive) requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  draw();
+}
+
+/* ── INIT ── */
+buildSectionTabs();
+buildTempora(); buildStufen(); render();
+buildKompStufen();
+</script>
+</body>
+</html>
