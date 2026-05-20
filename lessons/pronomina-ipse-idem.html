@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latein · ipse &amp; idem – Pronomina</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+.verb-page {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+.verb-page-header { margin-bottom: 2rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--border); }
+.verb-page-header h2 { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 700; color: var(--ink); line-height: 1.15; }
+.verb-page-header h2 em { font-style: italic; color: var(--gold); }
+.verb-page-header p { font-size: 0.9rem; color: var(--ink3); margin-top: 3px; margin-bottom: 0; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; }
+
+.verb-tabs { display: flex; gap: 0; border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; margin-bottom: 1.2rem; background: var(--surface2); }
+.verb-tab { flex: 1; padding: 10px 0; font-family: 'Source Serif 4', serif; font-size: 1.15rem; font-style: italic; font-weight: 400; background: none; border: none; cursor: pointer; color: var(--ink3); transition: all 0.15s; letter-spacing: 0.02em; }
+.verb-tab:not(:last-child) { border-right: 1px solid var(--border2); }
+.verb-tab.active { background: var(--ink); color: var(--bg); }
+.verb-tab:hover:not(.active) { background: var(--border); color: var(--ink); }
+.verb-tab.done:not(.active) { color: var(--green); }
+.verb-tab.done .vtcheck { font-style: normal; color: var(--green); margin-right: 4px; }
+.verb-tab.done.active .vtcheck { color: var(--gold2); }
+
+.extype-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 1.2rem; }
+.extype-btn { padding: 11px 8px; font-family: 'DM Mono', monospace; font-size: 0.72rem; background: none; border: 1px solid var(--border2); border-radius: var(--radius); cursor: pointer; color: var(--ink2); transition: all 0.15s; text-align: center; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.4; }
+.extype-btn.active { background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 500; }
+.extype-btn:hover:not(.active) { background: var(--surface2); color: var(--ink); }
+.extype-btn.done:not(.active) { border-color: var(--green); color: var(--green); }
+
+.stufen-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 1.8rem; }
+.stufe-btn { padding: 10px 4px; font-family: 'DM Mono', monospace; font-size: 0.68rem; background: none; border: 1px solid var(--border2); border-radius: var(--radius); cursor: pointer; color: var(--ink3); transition: all 0.15s; text-align: center; line-height: 1.4; letter-spacing: 0.03em; text-transform: uppercase; }
+.stufe-btn .snum { display: block; font-size: 1.3rem; font-family: 'Playfair Display', serif; color: var(--ink2); margin-bottom: 3px; font-weight: 700; }
+.stufe-btn.active { border-color: var(--ink); background: var(--ink); color: #e8dcc8; }
+.stufe-btn.active .snum { color: var(--gold2); }
+.stufe-btn.done { border-color: var(--green); }
+.stufe-btn.done .snum { color: var(--green); }
+.stufe-btn:hover:not(.active) { border-color: var(--ink3); color: var(--ink2); }
+
+.verb-content { border: 1px solid var(--border2); border-radius: var(--radius); background: var(--surface); min-height: 300px; padding: 1.5rem; box-shadow: var(--shadow); }
+
+/* Deklinationstabelle */
+.decl-table { width: 100%; border-collapse: collapse; }
+.decl-table caption { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.15rem; color: var(--ink2); margin-bottom: 10px; caption-side: top; text-align: left; }
+.decl-table th { font-family: 'DM Mono', monospace; font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink3); padding: 6px 10px; border-bottom: 1px solid var(--border); text-align: center; font-weight: 400; }
+.decl-table th:first-child { text-align: left; }
+.decl-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); font-size: 1rem; text-align: center; vertical-align: middle; }
+.decl-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.82rem; color: var(--ink3); text-align: left; white-space: nowrap; }
+.decl-table .form-cell { font-weight: 600; font-family: 'Source Serif 4', serif; }
+.decl-table tr:last-child td { border-bottom: none; }
+.section-header td { background: var(--surface2); font-family: 'DM Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink3); padding: 5px 10px; text-align: left !important; font-weight: 500; border-bottom: 1px solid var(--border); }
+
+.decl-input { font-family: 'Source Serif 4', serif; font-size: 0.9rem; font-weight: 600; border: 1.5px solid var(--border2); border-radius: 6px; padding: 4px 8px; background: var(--surface2); color: var(--ink); width: 108px; outline: none; transition: border-color 0.13s; text-align: center; }
+.decl-input:focus { border-color: var(--gold); background: var(--surface); }
+.decl-input.correct { border-color: var(--green); background: #edf7ed; color: var(--green); }
+.decl-input.wrong { border-color: var(--red); background: #fdf0ee; color: var(--red); }
+.hint-text { font-size: 0.73rem; color: var(--red); font-style: italic; display: block; margin-top: 2px; font-family: 'Source Serif 4', serif; }
+
+/* Timer */
+.timer-wrap { margin-bottom: 14px; }
+.timer-label { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--ink3); margin-bottom: 6px; display: flex; justify-content: space-between; }
+.timer-track { height: 3px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+.timer-fill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--gold), var(--gold2)); border-radius: 99px; transition: width 0.1s linear; }
+
+/* Actions & Buttons */
+.verb-actions { display: flex; gap: 8px; margin-top: 16px; align-items: center; flex-wrap: wrap; }
+.vbtn { display: inline-flex; align-items: center; gap: 6px; padding: 0.6rem 1.2rem; border-radius: 8px; font-family: 'Source Serif 4', serif; font-size: 14px; cursor: pointer; border: 1.5px solid transparent; transition: all 0.13s; }
+.vbtn-primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.vbtn-primary:hover { background: #2e2820; }
+.vbtn-ghost { background: var(--surface); color: var(--ink2); border-color: var(--border2); }
+.vbtn-ghost:hover { border-color: var(--ink3); background: var(--surface2); color: var(--ink); }
+.vbtn-gold { background: var(--gold); border-color: var(--gold); color: #fff; }
+.vbtn-gold:hover { background: #b8962e; }
+.vbtn-red { background: var(--red); border-color: var(--red); color: #fff; }
+.vbtn-red:hover { background: var(--red2); }
+
+/* Feedback */
+.verb-feedback { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 10px 14px; border-radius: var(--radius); font-size: 0.9rem; }
+.verb-feedback.ok { background: #edf7ed; border: 1px solid #aad4a7; color: var(--green); }
+.verb-feedback.err { background: #fdf0ee; border: 1px solid #f0b8ad; color: var(--red); }
+.verb-score { font-family: 'DM Mono', monospace; font-size: 0.78rem; margin-left: auto; padding: 3px 10px; border-radius: 99px; background: rgba(0,0,0,0.07); }
+
+/* Task box */
+.task-box { background: #fdf8ec; border: 1px solid rgba(196,154,42,0.35); border-left: 3px solid var(--gold); border-radius: var(--radius); padding: 0.85rem 1.1rem; margin-bottom: 1.4rem; }
+.task-box .task-label { font-family: 'DM Mono', monospace; font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold); margin-bottom: 5px; }
+.task-box .task-text { font-family: 'Source Serif 4', serif; font-size: 1rem; color: var(--ink); line-height: 1.55; margin: 0; }
+.task-box .task-text strong { font-weight: 600; color: var(--ink); }
+
+/* KNG Card exercise */
+.kng-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.kng-progress-text { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--ink3); letter-spacing: 0.08em; }
+.kng-streak-badge { font-family: 'DM Mono', monospace; font-size: 0.82rem; font-weight: 600; color: var(--gold); background: #fdf8ec; border: 1px solid rgba(196,154,42,0.4); padding: 3px 12px; border-radius: 99px; min-width: 52px; text-align: center; transition: transform 0.15s; }
+.kng-streak-badge.pop { transform: scale(1.25); }
+.kng-progress-bar { height: 4px; background: var(--surface2); border-radius: 99px; overflow: hidden; margin-bottom: 1.4rem; }
+.kng-progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold2)); border-radius: 99px; transition: width 0.3s ease; }
+.kng-card { background: var(--surface2); border: 1px solid var(--border2); border-radius: 14px; padding: 2.2rem 1.5rem 1.8rem; text-align: center; margin-bottom: 1.2rem; }
+.kng-card-noun { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-style: italic; font-weight: 700; color: var(--ink); margin-bottom: 1.6rem; line-height: 1.1; }
+.kng-card-input { font-family: 'Source Serif 4', serif; font-size: 1.15rem; font-weight: 600; border: 2px solid var(--border2); border-radius: 10px; padding: 10px 16px; background: var(--surface); color: var(--ink); width: 220px; outline: none; transition: border-color 0.13s; text-align: center; display: block; margin: 0 auto; }
+.kng-card-input:focus { border-color: var(--gold); background: #fffdf5; }
+.kng-card-input.correct { border-color: var(--green); background: #edf7ed; color: var(--green); }
+.kng-card-input.wrong { border-color: var(--red); background: #fdf0ee; color: var(--red); }
+.kng-feedback-line { font-family: 'Source Serif 4', serif; font-size: 1.05rem; margin: 1rem 0 0.4rem; }
+.kng-feedback-line.ok { color: var(--green); font-weight: 600; }
+.kng-feedback-line.err { color: var(--red); }
+.kng-card-actions { display: flex; gap: 8px; justify-content: center; margin-top: 1.2rem; flex-wrap: wrap; }
+.kng-summary { text-align: center; padding: 2rem 1rem; }
+.kng-summary h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-style: italic; font-weight: 700; color: var(--gold); margin-bottom: 0.5rem; }
+.kng-summary .score-big { font-family: 'DM Mono', monospace; font-size: 2.2rem; font-weight: 500; color: var(--ink); margin: 0.8rem 0; }
+.kng-summary .score-sub { font-family: 'Source Serif 4', serif; font-size: 1rem; color: var(--ink2); margin-bottom: 1.5rem; }
+
+/* Win screen */
+.win-screen { text-align: center; padding: 3rem 1rem; }
+.win-stars { font-size: 3rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
+.win-screen h2 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; font-style: italic; color: var(--gold); margin-bottom: 0.4rem; }
+.win-screen p { color: var(--ink2); font-size: 1rem; margin-bottom: 1.5rem; }
+
+@media (max-width: 600px) {
+  .verb-page { padding: 1.2rem 1rem 3rem; }
+  .decl-input { width: 80px; font-size: 0.82rem; padding: 3px 5px; }
+  .kng-card-noun { font-size: 2rem; }
+  .kng-card-input { width: 180px; }
+  .extype-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;"></canvas>
+
+<div class="shell" id="app-shell">
+  <div class="topbar">
+    <div class="topbar-title">
+      <span class="dot"></span>
+      Latein
+      <span class="topbar-sub">Pronomina · ipse &amp; idem</span>
+    </div>
+    <button class="vbtn vbtn-ghost" onclick="location.href='../index.html'" style="margin-left:12px;padding:0.45rem 0.9rem;font-size:13px;color:#e8dcc8;border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);">← zurück</button>
+  </div>
+
+  <div style="flex:1;overflow-y:auto;">
+    <div class="verb-page">
+      <div class="verb-page-header">
+        <h2>Pronomina: <em>ipse</em> &amp; <em>idem</em></h2>
+        <p>Deklination · KNG-Übung</p>
+      </div>
+
+      <div class="verb-tabs" id="pronounTabs"></div>
+      <div class="extype-row" id="extypeRow"></div>
+      <div class="stufen-row" id="stufenRow"></div>
+      <div class="verb-content" id="content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── DATA ── */
+const PRONOUNS = ["ipse", "idem"];
+const CASES = ["Nom.", "Gen.", "Dat.", "Akk.", "Abl."];
+const GENERA = ["m.", "f.", "n."];
+
+const FORMS = {
+  ipse: {
+    "Nom. Sg.": { "m.": ["ipse"],    "f.": ["ipsa"],    "n.": ["ipsum"]   },
+    "Gen. Sg.": { "m.": ["ipsius"],  "f.": ["ipsius"],  "n.": ["ipsius"]  },
+    "Dat. Sg.": { "m.": ["ipsi"],    "f.": ["ipsi"],    "n.": ["ipsi"]    },
+    "Akk. Sg.": { "m.": ["ipsum"],   "f.": ["ipsam"],   "n.": ["ipsum"]   },
+    "Abl. Sg.": { "m.": ["ipso"],    "f.": ["ipsa"],    "n.": ["ipso"]    },
+    "Nom. Pl.": { "m.": ["ipsi"],    "f.": ["ipsae"],   "n.": ["ipsa"]    },
+    "Gen. Pl.": { "m.": ["ipsorum"], "f.": ["ipsarum"], "n.": ["ipsorum"] },
+    "Dat. Pl.": { "m.": ["ipsis"],   "f.": ["ipsis"],   "n.": ["ipsis"]   },
+    "Akk. Pl.": { "m.": ["ipsos"],   "f.": ["ipsas"],   "n.": ["ipsa"]    },
+    "Abl. Pl.": { "m.": ["ipsis"],   "f.": ["ipsis"],   "n.": ["ipsis"]   }
+  },
+  idem: {
+    "Nom. Sg.": { "m.": ["idem"],              "f.": ["eadem"],    "n.": ["idem"]                    },
+    "Gen. Sg.": { "m.": ["eiusdem"],           "f.": ["eiusdem"],  "n.": ["eiusdem"]                 },
+    "Dat. Sg.": { "m.": ["eidem"],             "f.": ["eidem"],    "n.": ["eidem"]                   },
+    "Akk. Sg.": { "m.": ["eundem"],            "f.": ["eandem"],   "n.": ["idem"]                    },
+    "Abl. Sg.": { "m.": ["eodem"],             "f.": ["eadem"],    "n.": ["eodem"]                   },
+    "Nom. Pl.": { "m.": ["eidem", "idem"],     "f.": ["eaedem"],   "n.": ["eadem"]                   },
+    "Gen. Pl.": { "m.": ["eorundem"],          "f.": ["earundem"], "n.": ["eorundem"]                },
+    "Dat. Pl.": { "m.": ["eisdem", "iisdem"],  "f.": ["eisdem", "iisdem"], "n.": ["eisdem", "iisdem"] },
+    "Akk. Pl.": { "m.": ["eosdem"],            "f.": ["easdem"],   "n.": ["eadem"]                   },
+    "Abl. Pl.": { "m.": ["eisdem", "iisdem"],  "f.": ["eisdem", "iisdem"], "n.": ["eisdem", "iisdem"] }
+  }
+};
+
+const KNG_ITEMS = {
+  ipse: [
+    { noun: "rex",       answers: ["ipse"]             },
+    { noun: "puella",    answers: ["ipsa"]             },
+    { noun: "templum",   answers: ["ipsum"]            },
+    { noun: "regis",     answers: ["ipsius"]           },
+    { noun: "matri",     answers: ["ipsi"]             },
+    { noun: "reginam",   answers: ["ipsam"]            },
+    { noun: "rege",      answers: ["ipso"]             },
+    { noun: "puerorum",  answers: ["ipsorum"]          },
+    { noun: "puellas",   answers: ["ipsas"]            },
+    { noun: "libros",    answers: ["ipsos"]            },
+    { noun: "templis",   answers: ["ipsis"]            },
+    { noun: "templa",    answers: ["ipsa"]             }
+  ],
+  idem: [
+    { noun: "deus",         answers: ["idem"]                  },
+    { noun: "terra",        answers: ["eadem"]                 },
+    { noun: "templum",      answers: ["idem"]                  },
+    { noun: "imperatoris",  answers: ["eiusdem"]               },
+    { noun: "matri",        answers: ["eidem"]                 },
+    { noun: "filium",       answers: ["eundem"]                },
+    { noun: "reginam",      answers: ["eandem"]                },
+    { noun: "rege",         answers: ["eodem"]                 },
+    { noun: "deorum",       answers: ["eorundem"]              },
+    { noun: "puellas",      answers: ["easdem"]                },
+    { noun: "rebus",        answers: ["eisdem", "iisdem"]      },
+    { noun: "templa",       answers: ["eadem"]                 }
+  ]
+};
+
+/* ── STATE ── */
+let pronoun = "ipse";
+let exType = "tabelle";
+let stufe = 1;
+let doneMap = {};
+let timerInterval = null;
+let currentInputIds = [];
+
+let kngItems = [];
+let kngIndex = 0;
+let kngStreak = 0;
+let kngBestStreak = 0;
+let kngCorrect = 0;
+
+/* ── DONE HELPERS ── */
+function isDoneStufe(p, s)    { return !!doneMap[p + "_tabelle_" + s]; }
+function isTabelleDone(p)     { return [1,2,3].every(s => isDoneStufe(p, s)); }
+function isKngDone(p)         { return !!doneMap[p + "_kng"]; }
+function isPronounDone(p)     { return isTabelleDone(p) && isKngDone(p); }
+function isAllDone()          { return PRONOUNS.every(p => isPronounDone(p)); }
+
+/* ── BUILD UI ── */
+function buildPronounTabs() {
+  document.getElementById('pronounTabs').innerHTML = PRONOUNS.map(p => {
+    const done = isPronounDone(p);
+    const active = p === pronoun;
+    const check = done ? `<span class="vtcheck">✓</span>` : '';
+    return `<button class="verb-tab${active ? ' active' : ''}${done ? ' done' : ''}" onclick="setPronoun('${p}')">${check}<em>${p}</em></button>`;
+  }).join('');
+}
+
+function buildExType() {
+  const labels = { tabelle: "① Deklinationstabelle", kng: "② KNG-Übung" };
+  document.getElementById('extypeRow').innerHTML = Object.entries(labels).map(([k, lbl]) => {
+    const done = k === 'tabelle' ? isTabelleDone(pronoun) : isKngDone(pronoun);
+    const active = k === exType;
+    return `<button class="extype-btn${active ? ' active' : ''}${done ? ' done' : ''}" onclick="setExType('${k}')">${done && !active ? '✓ ' : ''}${lbl}</button>`;
+  }).join('');
+}
+
+const STUFE_LABELS = ["Formen\nansehen", "Einprägen\n+ ausfüllen", "Ausfüllen\n(blind)"];
+function buildStufen() {
+  const row = document.getElementById('stufenRow');
+  if (exType !== 'tabelle') { row.style.display = 'none'; return; }
+  row.style.display = '';
+  row.innerHTML = [1, 2, 3].map(i => {
+    const done = isDoneStufe(pronoun, i);
+    const active = i === stufe;
+    return `<button class="stufe-btn${active ? ' active' : ''}${done ? ' done' : ''}" onclick="setStufe(${i})">
+      <span class="snum">${done && !active ? '✓' : i}</span>${STUFE_LABELS[i - 1]}
+    </button>`;
+  }).join('');
+}
+
+function setPronoun(p) { clearTimer(); pronoun = p; buildPronounTabs(); buildExType(); buildStufen(); render(); }
+function setExType(t)  { clearTimer(); exType = t; stufe = 1; buildExType(); buildStufen(); render(); }
+function setStufe(s)   { clearTimer(); stufe = s; buildStufen(); render(); }
+
+/* ── RENDER DISPATCHER ── */
+function render() {
+  clearTimer();
+  const c = document.getElementById('content');
+  c.innerHTML = '';
+  if (exType === 'tabelle') {
+    if (stufe === 1)      renderView(c);
+    else if (stufe === 2) renderCountdownThenInput(c);
+    else                  renderInput(c, false);
+  } else {
+    renderKNG(c);
+  }
+}
+
+/* ── TABLE HTML (shared between view and input modes) ── */
+function viewTableHTML() {
+  let rows = '';
+  for (const num of ["Sg.", "Pl."]) {
+    rows += `<tr class="section-header"><td colspan="4">${num === 'Sg.' ? 'Singular' : 'Plural'}</td></tr>`;
+    for (const kasus of CASES) {
+      const key = kasus + " " + num;
+      rows += `<tr><td>${kasus}</td>`;
+      for (const g of GENERA) {
+        rows += `<td class="form-cell">${FORMS[pronoun][key][g][0]}</td>`;
+      }
+      rows += `</tr>`;
+    }
+  }
+  return `<table class="decl-table">
+    <caption>${pronoun}</caption>
+    <thead><tr><th>Kasus</th><th>m.</th><th>f.</th><th>n.</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function inputTableHTML() {
+  currentInputIds = [];
+  let rows = '';
+  for (const num of ["Sg.", "Pl."]) {
+    rows += `<tr class="section-header"><td colspan="4">${num === 'Sg.' ? 'Singular' : 'Plural'}</td></tr>`;
+    for (const ki of CASES.keys()) {
+      const kasus = CASES[ki];
+      const key = kasus + " " + num;
+      rows += `<tr><td>${kasus}</td>`;
+      for (let gi = 0; gi < GENERA.length; gi++) {
+        const id = `inp_${num}_${ki}_${gi}`;
+        currentInputIds.push({ id, key, genus: GENERA[gi] });
+        rows += `<td><input type="text" id="${id}" class="decl-input" placeholder="…"
+          autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off">
+          <span class="hint-text" id="h_${id}"></span></td>`;
+      }
+      rows += `</tr>`;
+    }
+  }
+  return `<table class="decl-table">
+    <caption>${pronoun}</caption>
+    <thead><tr><th>Kasus</th><th>m.</th><th>f.</th><th>n.</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+/* ── STUFE 1: VIEW ── */
+function renderView(c) {
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 1 — Formen kennenlernen</div>
+      <p class="task-text">Hier siehst du alle Formen von <strong><em>${pronoun}</em></strong> in der Übersicht.
+      Lies sie aufmerksam durch und präge sie dir gut ein – dann geht es weiter zu Stufe 2.</p>
+    </div>
+    ${viewTableHTML()}
+    <div class="verb-actions">
+      <button class="vbtn vbtn-gold" onclick="doneMap['${pronoun}_tabelle_1']=true; buildStufen(); buildExType(); setStufe(2)">
+        Weiter zu Stufe 2 →
+      </button>
+    </div>`;
+}
+
+/* ── STUFE 2: COUNTDOWN + INPUT ── */
+function renderCountdownThenInput(c) {
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">Stufe 2 — Einprägen &amp; ausfüllen</div>
+      <p class="task-text">Du hast <strong>15 Sekunden</strong>, um dir die Formen nochmals einzuprägen.
+      Danach füllst du die Tabelle selbst aus.</p>
+    </div>
+    <div class="timer-wrap">
+      <div class="timer-label"><span>Noch Zeit zum Einprägen …</span><span id="tsec">15</span></div>
+      <div class="timer-track"><div class="timer-fill" id="tfill"></div></div>
+    </div>
+    ${viewTableHTML()}`;
+  startTimer(15, () => renderInput(c, true));
+}
+
+/* ── STUFE 2 / 3: INPUT ── */
+function renderInput(c, fromCountdown) {
+  const stufeLbl = fromCountdown ? "Stufe 2" : "Stufe 3";
+  const stufeDesc = fromCountdown
+    ? "Fülle die Tabelle jetzt aus dem Gedächtnis aus."
+    : "Ganz ohne Vorlage: Fülle alle Formen selbst ein.";
+
+  const repeatBtn = fromCountdown
+    ? `<button class="vbtn vbtn-red" onclick="renderCountdownThenInput(document.getElementById('content'))">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.51"></path></svg>
+        Nochmal anschauen
+      </button>` : '';
+
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">${stufeLbl} — ${stufeDesc}</div>
+      <p class="task-text">Tippe alle Formen in die Felder. Mit <strong>Enter</strong> springst du zur nächsten Zelle.</p>
+    </div>
+    ${inputTableHTML()}
+    <div class="verb-actions">
+      <button class="vbtn vbtn-primary" onclick="checkInput(${fromCountdown})">Auswerten</button>
+      <button class="vbtn vbtn-ghost" onclick="renderInput(document.getElementById('content'), ${fromCountdown})">Zurücksetzen</button>
+      ${repeatBtn}
+    </div>
+    <div id="feedbackBar"></div>`;
+
+  if (currentInputIds.length > 0) document.getElementById(currentInputIds[0].id).focus();
+
+  currentInputIds.forEach((item, i) => {
+    const el = document.getElementById(item.id);
+    if (!el) return;
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (i + 1 < currentInputIds.length) {
+          document.getElementById(currentInputIds[i + 1].id).focus();
+        } else {
+          checkInput(fromCountdown);
+        }
+      }
+    });
+  });
+}
+
+function checkInput(fromCountdown) {
+  let correct = 0;
+  const total = currentInputIds.length;
+  currentInputIds.forEach(item => {
+    const inp  = document.getElementById(item.id);
+    const hint = document.getElementById('h_' + item.id);
+    if (!inp) return;
+    const val = inp.value.trim().toLowerCase();
+    const correctForms = FORMS[pronoun][item.key][item.genus];
+    const ok = correctForms.some(f => f.toLowerCase() === val);
+    inp.classList.toggle('correct', ok);
+    inp.classList.toggle('wrong', !ok);
+    if (hint) hint.textContent = ok ? '' : '→ ' + correctForms[0];
+    if (ok) correct++;
+  });
+  showFeedback(correct, total);
+  if (correct === total) {
+    const s = fromCountdown ? 2 : 3;
+    doneMap[pronoun + '_tabelle_' + s] = true;
+    buildStufen(); buildExType(); buildPronounTabs();
+    setTimeout(() => addNextBtn(s, fromCountdown), 400);
+  }
+}
+
+function addNextBtn(s, fromCountdown) {
+  const actions = document.querySelector('.verb-actions');
+  if (!actions || document.getElementById('nextBtn')) return;
+  const nb = document.createElement('button');
+  nb.className = 'vbtn vbtn-gold'; nb.id = 'nextBtn';
+  if (s < 3) {
+    nb.textContent = 'Weiter zu Stufe ' + (s + 1) + ' →';
+    nb.onclick = () => setStufe(s + 1);
+  } else {
+    nb.textContent = 'Weiter zur KNG-Übung →';
+    nb.onclick = () => setExType('kng');
+  }
+  actions.appendChild(nb);
+}
+
+/* ── KNG ÜBUNG (Card mode) ── */
+function renderKNG(c) {
+  kngItems = shuffle([...KNG_ITEMS[pronoun]]);
+  kngIndex = 0;
+  kngStreak = 0;
+  kngBestStreak = 0;
+  kngCorrect = 0;
+  renderKNGCard(c);
+}
+
+function renderKNGCard(c) {
+  if (kngIndex >= kngItems.length) { renderKNGSummary(c); return; }
+  const item = kngItems[kngIndex];
+  const total = kngItems.length;
+  const pct = (kngIndex / total) * 100;
+  const streakHTML = kngStreak > 0
+    ? `<span class="kng-streak-badge" id="streakBadge">🔥 ${kngStreak}</span>`
+    : `<span class="kng-streak-badge" id="streakBadge" style="opacity:0.3">🔥 0</span>`;
+
+  c.innerHTML = `
+    <div class="task-box">
+      <div class="task-label">KNG-Übung — Kongruenz</div>
+      <p class="task-text">Bestimme das Substantiv und bilde die passende Form von <strong><em>${pronoun}</em></strong>,
+      die in <strong>K</strong>asus, <strong>N</strong>umerus und <strong>G</strong>enus übereinstimmt.</p>
+    </div>
+    <div class="kng-meta">
+      <span class="kng-progress-text">${kngIndex + 1} / ${total}</span>
+      ${streakHTML}
+    </div>
+    <div class="kng-progress-bar"><div class="kng-progress-fill" style="width:${pct}%"></div></div>
+    <div class="kng-card">
+      <div class="kng-card-noun">${item.noun}</div>
+      <input type="text" id="kngInput" class="kng-card-input" placeholder="Form von ${pronoun} …"
+             autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off">
+    </div>
+    <div class="kng-card-actions">
+      <button class="vbtn vbtn-primary" id="pruefBtn" onclick="checkKNGCard()">Prüfen</button>
+    </div>`;
+
+  const inp = document.getElementById('kngInput');
+  inp.focus();
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); checkKNGCard(); }
+  });
+}
+
+function checkKNGCard() {
+  const inp = document.getElementById('kngInput');
+  if (!inp || inp.disabled) return;
+  const val = inp.value.trim().toLowerCase();
+  if (!val) return;
+
+  const item = kngItems[kngIndex];
+  const ok = item.answers.some(a => a.toLowerCase() === val);
+
+  inp.disabled = true;
+  inp.classList.toggle('correct', ok);
+  inp.classList.toggle('wrong', !ok);
+
+  if (ok) {
+    kngCorrect++;
+    kngStreak++;
+    kngBestStreak = Math.max(kngBestStreak, kngStreak);
+  } else {
+    kngStreak = 0;
+  }
+
+  const badge = document.getElementById('streakBadge');
+  if (badge) {
+    badge.textContent = `🔥 ${kngStreak}`;
+    badge.style.opacity = kngStreak > 0 ? '1' : '0.3';
+    if (ok && kngStreak > 1) { badge.classList.add('pop'); setTimeout(() => badge.classList.remove('pop'), 300); }
+  }
+
+  const feedbackHTML = ok
+    ? `<div class="kng-feedback-line ok">✓ Richtig!</div>`
+    : `<div class="kng-feedback-line err">✗ Falsch – richtig wäre: <strong>${item.answers[0]}</strong></div>`;
+
+  const card = document.querySelector('.kng-card');
+  if (card) card.insertAdjacentHTML('beforeend', feedbackHTML);
+
+  const actions = document.querySelector('.kng-card-actions');
+  if (actions) {
+    actions.innerHTML = `<button class="vbtn vbtn-gold" id="weiterBtn" onclick="nextKNGCard()">
+      ${kngIndex + 1 < kngItems.length ? 'Weiter →' : 'Auswertung →'}
+    </button>`;
+    document.getElementById('weiterBtn').focus();
+  }
+}
+
+function nextKNGCard() {
+  kngIndex++;
+  renderKNGCard(document.getElementById('content'));
+}
+
+function renderKNGSummary(c) {
+  const total = kngItems.length;
+  const allOk = kngCorrect === total;
+  if (allOk) {
+    doneMap[pronoun + '_kng'] = true;
+    buildExType(); buildPronounTabs();
+  }
+  const other = PRONOUNS.find(p => p !== pronoun && !isPronounDone(p));
+
+  c.innerHTML = `
+    <div class="kng-summary">
+      <div class="win-stars">${allOk ? '★ ★ ★' : kngCorrect >= total * 0.7 ? '★ ★ ☆' : '★ ☆ ☆'}</div>
+      <h3>${allOk ? 'Optime!' : 'Gut gekämpft!'}</h3>
+      <div class="score-big">${kngCorrect} / ${total}</div>
+      <div class="score-sub">Beste Serie: 🔥 ${kngBestStreak}</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="vbtn vbtn-ghost" onclick="renderKNG(document.getElementById('content'))">Nochmal spielen</button>
+        ${allOk && other ? `<button class="vbtn vbtn-gold" onclick="setPronoun('${other}')">Weiter zu <em>${other}</em> →</button>` : ''}
+        ${isAllDone() ? `<button class="vbtn vbtn-gold" onclick="showWin();startConfetti()">Abschluss →</button>` : ''}
+      </div>
+    </div>`;
+}
+
+/* ── WIN SCREEN ── */
+function showWin() {
+  document.getElementById('content').innerHTML = `
+    <div class="win-screen">
+      <div class="win-stars">★ ★ ★</div>
+      <h2>Optime!</h2>
+      <p>Du hast alle Übungen zu <em>ipse</em> und <em>idem</em> auf allen Stufen erfolgreich abgeschlossen!</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="vbtn vbtn-ghost" onclick="resetAll()">Neu beginnen</button>
+      </div>
+    </div>`;
+}
+
+function resetAll() {
+  doneMap = {}; pronoun = "ipse"; exType = "tabelle"; stufe = 1;
+  buildPronounTabs(); buildExType(); buildStufen(); render();
+}
+
+/* ── FEEDBACK ── */
+function showFeedback(correct, total) {
+  const bar = document.getElementById('feedbackBar');
+  if (!bar) return;
+  if (correct === total) {
+    bar.innerHTML = `<div class="verb-feedback ok">✓ Alle ${total} Formen richtig! <span class="verb-score">${total}/${total}</span></div>`;
+  } else {
+    bar.innerHTML = `<div class="verb-feedback err">✗ ${correct} von ${total} richtig — markierte Formen prüfen <span class="verb-score">${correct}/${total}</span></div>`;
+  }
+}
+
+/* ── TIMER ── */
+function startTimer(secs, cb) {
+  clearTimer();
+  let elapsed = 0;
+  const total = secs * 10;
+  timerInterval = setInterval(() => {
+    elapsed++;
+    const pct  = Math.max(0, 100 - (elapsed / total) * 100);
+    const fill = document.getElementById('tfill');
+    const sec  = document.getElementById('tsec');
+    if (fill) fill.style.width = pct + '%';
+    if (sec)  sec.textContent  = Math.ceil((total - elapsed) / 10);
+    if (elapsed >= total) { clearTimer(); cb(); }
+  }, 100);
+}
+function clearTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+
+/* ── CONFETTI ── */
+function startConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const COLORS = ['#c49a2a','#e8c55a','#2a6640','#9b2a1a','#3a86ff','#a89060','#f4c842'];
+  const pieces = Array.from({ length: 130 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    w: 8 + Math.random() * 8, h: 4 + Math.random() * 5,
+    angle: Math.random() * Math.PI * 2, spin: (Math.random() - 0.5) * 0.2,
+    vy: 2 + Math.random() * 3, vx: (Math.random() - 0.5) * 2,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)], alpha: 1
+  }));
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    pieces.forEach(p => {
+      p.y += p.vy; p.x += p.vx; p.angle += p.spin;
+      if (frame > 120) p.alpha = Math.max(0, p.alpha - 0.012);
+      if (p.alpha > 0 && p.y < canvas.height + 20) alive = true;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.angle);
+      ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (alive) requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  draw();
+}
+
+/* ── INIT ── */
+buildPronounTabs(); buildExType(); buildStufen(); render();
+</script>
+</body>
+</html>
