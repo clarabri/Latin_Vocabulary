@@ -516,6 +516,7 @@ function checkKNGCard() {
     kngCorrect++;
     kngStreak++;
     kngBestStreak = Math.max(kngBestStreak, kngStreak);
+    showComboFlash(kngStreak);
   } else {
     kngStreak = 0;
   }
@@ -617,6 +618,24 @@ function startTimer(secs, cb) {
 }
 function clearTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
 function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+
+/* ── COMBO FLASH ── */
+function showComboFlash(streak) {
+  const msgs = {
+    3:  '🔥 3 in Folge!',
+    5:  '⚡ 5 – Klasse!',
+    7:  '✨ 7 – Fantastisch!',
+    10: '🌟 10 – Perfecto!'
+  };
+  const msg = msgs[streak];
+  if (!msg) return;
+  let el = document.getElementById('combo-flash');
+  if (!el) { el = document.createElement('div'); el.id = 'combo-flash'; document.body.appendChild(el); }
+  el.textContent = msg;
+  el.classList.remove('combo-flash-anim');
+  void el.offsetWidth;
+  el.classList.add('combo-flash-anim');
+}
 
 /* ── CONFETTI ── */
 function startConfetti() {
