@@ -23,7 +23,9 @@ const lessonRouteMap = {
   'Latein-9c': {
     'Lektion 15': 'Lektion 41',
     'Lektion 40': 'Lektion 41',
-    'Lektion 41': 'Lektion 41'
+    'Lektion 41': 'Lektion 41',
+    'Lektion 42': 'Lektion 41',
+    'Lektion 43': 'Lektion 41'
   },
   'Latein-8c': {
     'Stammformen bekannter Vokabeln': 'Lektion 41',
